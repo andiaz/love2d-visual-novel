@@ -1,183 +1,115 @@
-local scene
-
-local currentBGM = nil
-local currentBGMName = ""
-local bgmSources = {}
-
-local sfx = {}
-
-local currentLine = 1
-local visibleText = ""
-local textTimer = 0
-local charInterval = 0.03
-local typing = true
-
-local backgroundName = ""
-local backgroundImages = {} -- cache for bg images
-local bgScaleX, bgScaleY
-
-local portraits = {} -- loaded portrait images by name
-local charScale
-
-function loadScene(name)
-    scene = require("scenes." .. name)
-    currentLine = 1
-    setLine(scene.dialogue[currentLine])
-
-    -- Handle background music
-    if scene.bgm and scene.bgm ~= currentBGMName then
-        currentBGMName = scene.bgm
-
-        -- stop old music
-        if currentBGM then
-            currentBGM:stop()
-        end
-
-        --load or reuse music source
-        if not bgmSources[currentBGMName] then
-            bgmSources[currentBGMName] = love.audio.newSource("assets/bgm/" .. currentBGMName .. ".ogg", "stream")
-            bgmSources[currentBGMName]:setLooping(true)
-            bgmSources[currentBGMName]:setVolume(0.4) -- softer default volume
-        end
-
-        currentBGM = bgmSources[currentBGMName]
-        currentBGM:play()
-    end
-end
+local Scene = require("engine.scene")
 
 function love.load()
     love.window.setMode(800, 600)
-    love.window.setTitle("Love2D Visual Novel")
+    love.window.setTitle("Sprint Zero")
 
-    charScale = 0.25
-
-    sfx.click = love.audio.newSource("assets/sfx/click1.ogg", "static")
-
-    loadScene("day1")
-end
-
-function setLine(line)
-    visibleText = ""
-    textTimer = 0
-    typing = true
-
-    -- Handle instant scene switch if there's a goto line
-    if line.goto and (not line.text or line.text == "") then
-        loadScene(line.goto)
-        return
-    end
-
-    -- Set background if defined at scene level (only once)
-    if scene.bg then
-        backgroundName = scene.bg
-
-        if not backgroundImages[backgroundName] then
-            backgroundImages[backgroundName] = love.graphics.newImage("assets/bg/" .. backgroundName .. ".png")
-        end
-    end
+    Scene:init()
+    Scene:loadScene("day1")
 end
 
 function love.update(dt)
-    if typing then
-        local line = scene.dialogue[currentLine]
-        textTimer = textTimer + dt
-
-        -- Add one character at a time
-        while textTimer >= charInterval and #visibleText < #line.text do
-            local nextChar = line.text:sub(#visibleText + 1, #visibleText + 1)
-            visibleText = visibleText .. nextChar
-            textTimer = textTimer - charInterval
-        end
-
-        -- Done typing
-        if visibleText == line.text then
-            typing = false
-        end
-    end
+    Scene:update(dt)
 end
 
 function love.keypressed(key)
-    if key == "space" then
-        if sfx.click then sfx.click:play() end
-        
-        local line = scene.dialogue[currentLine]
-        if typing then
-            -- Skip to the full line
-            visibleText = line.text
-            typing = false
-        else
-            -- Go to next line
-            if (currentLine < #scene.dialogue) then
-                currentLine = currentLine + 1
-                setLine(scene.dialogue[currentLine])
-            else
-                -- End of scene, check if there's a goto
-                local lastLine = scene.dialogue[currentLine]
-                if lastLine.goto then
-                    loadScene(lastLine.goto)
-                end
-            end
-        end
-    end
     if key == "escape" then
         love.event.quit()
     end
+    Scene:keypressed(key)
+end
+
+function love.mousepressed(x, y, button)
+    Scene:mousepressed(x, y, button)
 end
 
 function love.draw()
-    -- Get window size
     local screenWidth, screenHeight = love.graphics.getDimensions()
 
-    -- Load background based on scene and scaled to fit screen
-    if backgroundImages[backgroundName] then
-        local bg = backgroundImages[backgroundName]
-        bgScaleX = 800 / bg:getWidth()
-        bgScaleY = 600 / bg:getHeight()
+    -- Draw background
+    if Scene.backgroundImages[Scene.backgroundName] then
+        local bg = Scene.backgroundImages[Scene.backgroundName]
+        local bgScaleX = screenWidth / bg:getWidth()
+        local bgScaleY = screenHeight / bg:getHeight()
         love.graphics.setColor(1, 1, 1)
         love.graphics.draw(bg, 0, 0, 0, bgScaleX, bgScaleY)
     end
 
-    -- textbox height
+    local line = Scene:getLine()
+    if not line then return end
+
+    -- Draw portrait
+    local portraitName = Scene:getPortraitName(line)
+    local portrait = Scene:getPortrait(portraitName)
+    if portrait then
+        love.graphics.setColor(0.8, 0.8, 0.8, 1)
+        love.graphics.rectangle("fill", 45, 145, portrait:getWidth() * Scene.charScale + 10, portrait:getHeight() * Scene.charScale + 10)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(portrait, 50, 150, 0, Scene.charScale, Scene.charScale)
+    end
+
+    -- Textbox
     local textboxHeight = 100
     local textboxY = screenHeight - textboxHeight
 
-    -- Draw textbox
     love.graphics.setColor(0, 0, 0, 0.7)
     love.graphics.rectangle("fill", 0, textboxY, screenWidth, textboxHeight)
 
-    -- Reset the color for text
+    -- Speaker name (colored)
+    local speakerName = Scene:getSpeakerName(line)
+    if speakerName then
+        local speakerColor = Scene:getSpeakerColor(line)
+        love.graphics.setColor(speakerColor)
+        love.graphics.print(speakerName .. ":", 20, textboxY + 10)
+    end
+
+    -- Dialogue text
     love.graphics.setColor(1, 1, 1)
+    love.graphics.printf(Scene.visibleText, 20, textboxY + 40, screenWidth - 40)
 
-    -- Get the current dialogue line
-    local line = scene.dialogue[currentLine]
+    -- Draw choices if showing
+    if Scene.showingChoices and line.choices then
+        drawChoices(line.choices, screenWidth, textboxY)
+    end
 
-    -- Draw portrait if image is defined
-    if line.image then
-        -- load portrait if not already loaded
-        if not portraits[line.image] then
-            portraits[line.image] = love.graphics.newImage("assets/characters/" .. line.image .. ".png")
-        end
-        
-        local portrait = portraits[line.image]
-
-        -- Draw border rectangle around portrait
-        love.graphics.setColor(0.8, 0.8, 0.8, 1)
-        love.graphics.rectangle("fill", 45, 145, portrait:getWidth() * charScale + 10, portrait:getHeight() * charScale + 10)
-
-        -- Draw character portrait (scaled)
+    -- Next prompt
+    if not Scene.typing and not Scene.showingChoices and Scene.currentLine < #Scene.current.dialogue then
         love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(portrait, 50, 150, 0, charScale, charScale)
-
+        love.graphics.print(">>", screenWidth - 40, textboxY + 70)
     end
-    -- Draw speaker text
-    if line.speaker then
-        love.graphics.print(line.speaker .. ":", 20, textboxY + 10)
-    end
+end
 
-    love.graphics.printf(visibleText, 20, textboxY + 40, screenWidth - 40)
+function drawChoices(choices, screenWidth, textboxY)
+    local choiceBoxWidth = screenWidth - 80
+    local choiceHeight = 36
+    local choicePadding = 6
+    local totalHeight = #choices * (choiceHeight + choicePadding) - choicePadding
+    local startY = textboxY - totalHeight - 20
+    local startX = 40
 
-    -- Show next prompt if ready
-    if not typing and currentLine < #scene.dialogue then
-        love.graphics.print(">>", screenWidth-40, textboxY + 70)
+    for i, choice in ipairs(choices) do
+        local cy = startY + (i - 1) * (choiceHeight + choicePadding)
+        local isSelected = (i == Scene.selectedChoice)
+
+        -- Background
+        if isSelected then
+            love.graphics.setColor(0.3, 0.5, 0.8, 0.9)
+        else
+            love.graphics.setColor(0.1, 0.1, 0.1, 0.85)
+        end
+        love.graphics.rectangle("fill", startX, cy, choiceBoxWidth, choiceHeight, 4, 4)
+
+        -- Border
+        if isSelected then
+            love.graphics.setColor(0.5, 0.7, 1.0, 1)
+        else
+            love.graphics.setColor(0.4, 0.4, 0.4, 0.8)
+        end
+        love.graphics.rectangle("line", startX, cy, choiceBoxWidth, choiceHeight, 4, 4)
+
+        -- Text
+        love.graphics.setColor(1, 1, 1)
+        local prefix = isSelected and "> " or "  "
+        love.graphics.print(prefix .. choice.text, startX + 12, cy + 10)
     end
 end

@@ -1,46 +1,71 @@
-# Love2D Visual Novel
+# Sprint Zero
 
-A simple visual novel engine built with [Love2D](https://love2d.org/) (Lua).
+A comedy visual novel about surviving the IT industry, built with [Love2D](https://love2d.org/).
+
+You play as Alex, a UX Designer on a new product team. Navigate standups, scope creep, impossible deadlines, and office politics — all while trying to ship something users actually want.
 
 ## Features
 
-- Scene-based dialogue system with speaker names
-- Typewriter text effect with skip functionality
-- Character portraits with automatic caching
-- Background images scaled to fit the window
-- Looping background music with scene transitions
-- Sound effects for UI interactions
-- Scene-to-scene transitions via `goto`
+- Scene-based dialogue with branching choices
+- Conditional story paths based on player decisions
+- Character relationship tracking
+- Typewriter text effect with skip
+- Character portraits and backgrounds
+- Looping background music and sound effects
 
 ## Controls
 
-- **Space** - Advance dialogue / Skip text animation
-- **Escape** - Quit game
+- **Space** — Advance dialogue / Skip text / Confirm choice
+- **Up/Down** — Navigate choices
+- **Enter** — Confirm choice
+- **Mouse** — Click to select choices
+- **Escape** — Quit
+
+## Characters
+
+| Name   | Role              |
+|--------|-------------------|
+| Alex   | UX Designer (you) |
+| Jordan | Project Manager   |
+| Sam    | Developer         |
+| Priya  | Product Owner     |
+| Riley  | QA Engineer       |
+| Casey  | Architect         |
 
 ## Project Structure
 
 ```
+engine/
+  state.lua           # Game flags, relationships, conditions
+  characters.lua      # Character registry (names, colors)
+  scene.lua           # Scene loading, dialogue, choices, branching
+scenes/               # Story scenes (.lua)
 assets/
-├── bg/           # Background images (.png)
-├── bgm/          # Background music (.ogg)
-├── characters/   # Character portraits (.png)
-└── sfx/          # Sound effects (.ogg)
-scenes/           # Scene dialogue files (.lua)
-main.lua          # Main game code
+  bg/                 # Background images (.png)
+  bgm/                # Background music (.ogg)
+  characters/         # Character portraits (.png)
+  sfx/                # Sound effects (.ogg)
+main.lua              # Love2D callbacks and rendering
 ```
 
 ## Scene Format
 
-Scenes are Lua files in the `scenes/` folder that return a table:
+Scenes are Lua files in `scenes/` that return a table:
 
 ```lua
 return {
-    bg = "background_name",  -- optional background image
-    bgm = "music_name",      -- optional background music
+    bg = "background_name",
+    bgm = "music_name",
     dialogue = {
-        { speaker = "Name", text = "Dialogue text here.", image = "portrait_name" },
-        { text = "Narration without a speaker." },
-        { goto = "next_scene" }  -- transition to another scene
+        { speaker = "dev", expression = "neutral", text = "Hello!" },
+        { speaker = "pm", expression = "neutral", text = "Pick one:",
+            choices = {
+                { text = "Option A", set = {flag_a = true}, rel = {dev = 1} },
+                { text = "Option B", set = {flag_b = true} },
+            }
+        },
+        { speaker = "dev", text = "You picked A!", condition = "flag_a" },
+        { goto = "next_scene" }
     }
 }
 ```
@@ -48,16 +73,6 @@ return {
 ## Running
 
 1. Install [Love2D](https://love2d.org/)
-2. Run the game:
+2. Run: `love .`
 
-**Windows (if Love2D is not in PATH):**
-```
-"C:\Program Files\LOVE\love.exe" .
-```
-
-**Or add Love2D to PATH, then:**
-```
-love .
-```
-
-**Drag and drop:** You can also drag the project folder onto `love.exe`
+Or drag the project folder onto `love.exe`.
