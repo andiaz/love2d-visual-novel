@@ -1,0 +1,13 @@
+# Love2D builds
+*.love
+*.exe
+*.app
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Editor files
+.vscode/
+*.swp
+*.swo
