@@ -2,12 +2,18 @@ local Scene = require("engine.scene")
 local State = require("engine.state")
 
 local fonts = {}
-local gameMode = "menu" -- "menu" or "playing"
+local gameMode = "menu" -- "menu", "playing", "resume"
 
 -- Menu state
 local menuOptions = {}
 local menuSelected = 1
 local menuHovered = 0
+
+-- Resume card state (shown when loading a save)
+local resumeScene = nil
+
+-- "Progress saved" notice timer (shown after returning from gameplay)
+local savedNoticeTimer = 0
 
 function love.load()
     love.window.setTitle("Sprint Zero")
@@ -47,7 +53,9 @@ end
 function continueGame()
     local ok = Scene:loadFromSave()
     if ok then
-        gameMode = "playing"
+        -- Show resume recap card before gameplay
+        resumeScene = Scene.current
+        gameMode = "resume"
     else
         startNewGame()
     end
@@ -55,6 +63,7 @@ end
 
 function returnToMenu()
     gameMode = "menu"
+    savedNoticeTimer = 3.0 -- show "Progress saved" for 3 seconds
     -- Stop BGM
     if Scene.currentBGM then
         Scene.currentBGM:stop()
@@ -66,6 +75,9 @@ function returnToMenu()
 end
 
 function love.update(dt)
+    if gameMode == "menu" and savedNoticeTimer > 0 then
+        savedNoticeTimer = savedNoticeTimer - dt
+    end
     if gameMode == "playing" then
         Scene:update(dt)
     end
@@ -87,6 +99,18 @@ function love.keypressed(key)
         return
     end
 
+    -- Resume card mode
+    if gameMode == "resume" then
+        if key == "space" or key == "return" then
+            gameMode = "playing"
+            resumeScene = nil
+        elseif key == "escape" then
+            resumeScene = nil
+            returnToMenu()
+        end
+        return
+    end
+
     -- Playing mode
     if key == "escape" then
         returnToMenu()
@@ -97,6 +121,12 @@ end
 
 function love.mousepressed(x, y, button)
     if button ~= 1 then return end
+
+    if gameMode == "resume" then
+        gameMode = "playing"
+        resumeScene = nil
+        return
+    end
 
     if gameMode == "menu" then
         local screenWidth, screenHeight = love.graphics.getDimensions()
@@ -158,6 +188,11 @@ function love.draw()
 
     if gameMode == "menu" then
         drawMenu(screenWidth, screenHeight)
+        return
+    end
+
+    if gameMode == "resume" then
+        drawResumeCard(screenWidth, screenHeight)
         return
     end
 
@@ -232,6 +267,13 @@ function love.draw()
         love.graphics.print(">>>", screenWidth - 50, textboxY + textboxHeight - 24)
     end
 
+    -- Controls hint (top-right, subtle)
+    love.graphics.setFont(fonts.menuSmall)
+    love.graphics.setColor(0.6, 0.6, 0.7, 0.3)
+    local controlHint = "SPACE = Advance | ESC = Menu"
+    local chWidth = fonts.menuSmall:getWidth(controlHint)
+    love.graphics.print(controlHint, screenWidth - chWidth - 10, 6)
+
     -- Fade overlay (drawn last, on top of everything)
     drawFadeOverlay(screenWidth, screenHeight)
 end
@@ -265,6 +307,13 @@ function drawMenu(screenWidth, screenHeight)
     local lineWidth = 200
     love.graphics.setColor(0.4, 0.6, 0.9, 0.4)
     love.graphics.rectangle("fill", (screenWidth - lineWidth) / 2, screenHeight / 2 - 40, lineWidth, 2)
+
+    -- Controls info (between accent line and menu options)
+    love.graphics.setFont(fonts.menuSmall)
+    love.graphics.setColor(0.5, 0.55, 0.65, 0.7)
+    local controls = "SPACE / Click = Advance    Up/Down = Choose    ESC = Menu"
+    local controlsWidth = fonts.menuSmall:getWidth(controls)
+    love.graphics.print(controls, (screenWidth - controlsWidth) / 2, screenHeight / 2 - 18)
 
     -- Menu options
     local optionHeight = 44
@@ -303,16 +352,94 @@ function drawMenu(screenWidth, screenHeight)
         love.graphics.print(label, startX + (optionWidth - labelWidth) / 2, cy + 11)
     end
 
-    -- Version / hint
-    love.graphics.setFont(fonts.menuSmall)
-    love.graphics.setColor(0.4, 0.4, 0.5, 0.6)
-    love.graphics.print("ESC to quit", 16, screenHeight - 28)
+    -- "Progress saved" notice below menu options (fades out over 3 seconds)
+    if savedNoticeTimer > 0 then
+        local noticeAlpha = math.min(savedNoticeTimer / 1.0, 1) -- fade out in last second
+        local noticeY = startY + #menuOptions * (optionHeight + optionPadding) + 8
+        love.graphics.setFont(fonts.prompt)
+        love.graphics.setColor(0.4, 0.8, 0.4, 0.9 * noticeAlpha)
+        local notice = "Progress saved"
+        local noticeWidth = fonts.prompt:getWidth(notice)
+        love.graphics.print(notice, (screenWidth - noticeWidth) / 2, noticeY)
+    end
 
-    -- Pulsing hint
-    love.graphics.setColor(0.5, 0.5, 0.6, 0.3 + 0.2 * math.sin(love.timer.getTime() * 2))
-    local hint = "Use arrow keys or mouse"
-    local hintWidth = fonts.menuSmall:getWidth(hint)
-    love.graphics.print(hint, (screenWidth - hintWidth) / 2, screenHeight - 28)
+    -- Bottom bar
+    love.graphics.setFont(fonts.menuSmall)
+
+    -- Auto-save notice (left)
+    love.graphics.setColor(0.4, 0.55, 0.4, 0.6)
+    love.graphics.print("Game saves automatically", 16, screenHeight - 28)
+
+    -- Navigation hint (right)
+    love.graphics.setColor(0.4, 0.4, 0.5, 0.5)
+    local navHint = "Arrow keys or mouse to navigate"
+    local navWidth = fonts.menuSmall:getWidth(navHint)
+    love.graphics.print(navHint, screenWidth - navWidth - 16, screenHeight - 28)
+end
+
+function drawResumeCard(screenWidth, screenHeight)
+    -- Dark background
+    love.graphics.setColor(0.05, 0.05, 0.1, 1)
+    love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+
+    -- Subtle pattern lines
+    love.graphics.setColor(0.1, 0.1, 0.18, 1)
+    for i = 0, screenHeight, 30 do
+        love.graphics.rectangle("fill", 0, i, screenWidth, 1)
+    end
+
+    -- "Resuming..." header
+    love.graphics.setFont(fonts.titleSub)
+    love.graphics.setColor(0.4, 0.6, 0.9, 0.7)
+    local header = "Resuming..."
+    local headerWidth = fonts.titleSub:getWidth(header)
+    love.graphics.print(header, (screenWidth - headerWidth) / 2, screenHeight / 2 - 100)
+
+    if resumeScene then
+        -- Day title
+        if resumeScene.title then
+            love.graphics.setFont(fonts.titleLarge)
+            love.graphics.setColor(1, 1, 1, 1)
+            local title = resumeScene.title
+            local titleWidth = fonts.titleLarge:getWidth(title)
+            love.graphics.print(title, (screenWidth - titleWidth) / 2, screenHeight / 2 - 60)
+        end
+
+        -- Subtitle
+        if resumeScene.subtitle then
+            love.graphics.setFont(fonts.titleSub)
+            love.graphics.setColor(0.85, 0.9, 1.0, 1)
+            local sub = resumeScene.subtitle
+            local subWidth = fonts.titleSub:getWidth(sub)
+            love.graphics.print(sub, (screenWidth - subWidth) / 2, screenHeight / 2 - 10)
+        end
+
+        -- Narration as recap
+        if resumeScene.narration then
+            love.graphics.setFont(fonts.dialogue)
+            love.graphics.setColor(0.9, 0.9, 0.9, 0.9)
+            love.graphics.printf(resumeScene.narration, 100, screenHeight / 2 + 30, screenWidth - 200, "center")
+        end
+
+        -- If no title (e.g. ending scene), show scene name
+        if not resumeScene.title then
+            love.graphics.setFont(fonts.titleLarge)
+            love.graphics.setColor(1, 1, 1, 1)
+            local name = Scene.currentName or "Unknown"
+            -- Format scene name nicely: "ending_ship" -> "Ending: Ship"
+            name = name:gsub("_", " "):gsub("(%a)([%w]*)", function(a, b) return a:upper() .. b end)
+            name = name:gsub("Ending ", "Ending: ")
+            local nameWidth = fonts.titleLarge:getWidth(name)
+            love.graphics.print(name, (screenWidth - nameWidth) / 2, screenHeight / 2 - 40)
+        end
+    end
+
+    -- "Press space" hint
+    love.graphics.setFont(fonts.prompt)
+    love.graphics.setColor(1, 1, 1, 0.3 + 0.3 * math.sin(love.timer.getTime() * 2))
+    local hint = "Press SPACE to continue"
+    local hintWidth = fonts.prompt:getWidth(hint)
+    love.graphics.print(hint, (screenWidth - hintWidth) / 2, screenHeight - 60)
 end
 
 function drawTitleCard(screenWidth, screenHeight)
@@ -338,9 +465,9 @@ function drawTitleCard(screenWidth, screenHeight)
 
     -- Narration text (recap/setup)
     if Scene.current.narration then
-        love.graphics.setFont(fonts.speaker)
+        love.graphics.setFont(fonts.dialogue)
         love.graphics.setColor(0.9, 0.9, 0.9, Scene.titleCardAlpha)
-        love.graphics.printf(Scene.current.narration, 120, screenHeight / 2 + 50, screenWidth - 240, "center")
+        love.graphics.printf(Scene.current.narration, 100, screenHeight / 2 + 50, screenWidth - 200, "center")
     end
 
     -- "Press space" hint

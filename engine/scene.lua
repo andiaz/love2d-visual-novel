@@ -136,17 +136,6 @@ function Scene:_doLoadScene(name)
     self.hoveredChoice = 0
     self.showingChoices = false
 
-    if self.current.title then
-        self.showingTitleCard = true
-        self.titleCardAlpha = 0
-        self.titleCardTimer = 0
-        self.titleCardPhase = "fadein"
-    else
-        self.showingTitleCard = false
-        self.titleCardPhase = "none"
-        self:setLine(self.current.dialogue[self.currentLine])
-    end
-
     if self.current.bgm and self.current.bgm ~= self.currentBGMName then
         self.currentBGMName = self.current.bgm
         if self.currentBGM then
@@ -166,6 +155,18 @@ function Scene:_doLoadScene(name)
         if not self.backgroundImages[self.backgroundName] then
             self.backgroundImages[self.backgroundName] = love.graphics.newImage("assets/bg/" .. self.backgroundName .. ".png")
         end
+    end
+
+    -- Title card: start with delay so background is visible first
+    if self.current.title then
+        self.showingTitleCard = true
+        self.titleCardAlpha = 0
+        self.titleCardTimer = 0
+        self.titleCardPhase = "delay"
+    else
+        self.showingTitleCard = false
+        self.titleCardPhase = "none"
+        self:setLine(self.current.dialogue[self.currentLine])
     end
 
     -- Auto-save
@@ -387,7 +388,13 @@ function Scene:update(dt)
     -- Handle title card
     if self.showingTitleCard then
         self.titleCardTimer = self.titleCardTimer + dt
-        if self.titleCardPhase == "fadein" then
+        if self.titleCardPhase == "delay" then
+            -- Show background alone for a moment before title text appears
+            if self.titleCardTimer >= 0.7 then
+                self.titleCardPhase = "fadein"
+                self.titleCardTimer = 0
+            end
+        elseif self.titleCardPhase == "fadein" then
             self.titleCardAlpha = math.min(self.titleCardTimer / 0.5, 1)
             if self.titleCardAlpha >= 1 then
                 self.titleCardPhase = "hold"
