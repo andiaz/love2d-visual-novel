@@ -1,4 +1,8 @@
 return {
+    title = "Day 13 — Monday",
+    subtitle = "The Feedback",
+    narration = "The demo is done. Leadership has spoken. Time to face the music.",
+
     bg = "office_day",
     bgm = "theme",
 

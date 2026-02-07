@@ -1,4 +1,8 @@
 return {
+    title = "Day 14 — Friday",
+    subtitle = "Last Day",
+    narration = "The final standup. The last words. Fifteen days compressed into goodbye.",
+
     bg = "office_day",
     bgm = "theme",
 

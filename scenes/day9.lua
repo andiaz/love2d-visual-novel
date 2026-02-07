@@ -1,4 +1,8 @@
 return {
+    title = "Day 9 — Friday",
+    subtitle = "The Pivot",
+    narration = "Demo day. But first, an emergency meeting. Priya met the CEO's nephew.",
+
     bg = "office_day",
     bgm = "theme",
 

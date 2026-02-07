@@ -1,12 +1,12 @@
 # Sprint Zero — To-Do List
 
 ## Engine
-- [ ] Add save/load system (serialize State flags + relationships + current scene/line to file)
-- [ ] Add title screen / main menu (New Game, Continue, Quit)
-- [ ] Add scene transition effects (fade to black between days)
-- [ ] Add per-line background switching (currently only set at scene level)
+- [x] Add save/load system (serialize State flags + relationships + current scene/line to file)
+- [x] Add title screen / main menu (New Game, Continue, Quit)
+- [x] Add scene transition effects (fade to black between days)
+- [x] Add per-line background switching (currently only set at scene level)
 - [ ] Add support for multiple characters on screen at once
-- [ ] Add ending calculation logic (evaluate flags + relationship scores to pick ending)
+- [x] Add ending calculation logic (evaluate flags + relationship scores to pick ending)
 
 ## Art & Assets
 
@@ -106,11 +106,8 @@ Use same style prefix but: `anime background art, no characters, wide shot, 800x
 - [ ] Write branching day variants for major divergence points (optional — game works without these)
 
 ## Polish
-- [ ] Add conf.lua for window configuration
-- [ ] Mouse hover highlight on choices
-- [ ] Animate choice boxes appearing (slide in or fade)
-- [ ] Add text sound effect (soft blip per character during typewriter)
-- [ ] Add day title card between scenes ("Day 4 — Wednesday")
+- [x] Animate choice boxes appearing (slide in + fade, staggered per choice)
+- [x] Add text sound effect (procedural blip every 2 characters during typewriter)
 - [ ] Test all story branches end-to-end
 - [ ] Update README with final feature list
 
@@ -122,7 +119,19 @@ Use same style prefix but: `anime background art, no characters, wide shot, 800x
 - [x] Engine: Conditional line skipping
 - [x] Engine: UTF-8 safe typewriter effect
 - [x] Engine: Colored speaker names with titles
+- [x] Engine: Fade transitions between scenes
+- [x] Engine: Per-line background switching
+- [x] Engine: Ending calculation logic
+- [x] Engine: Day title cards with narration
+- [x] Engine: Bigger fonts and improved textbox (conf.lua, 960x540)
+- [x] Engine: Mouse hover highlight on choices
+- [x] Engine: Save/load system (auto-save on scene load + line advance)
+- [x] Engine: Title screen / main menu (New Game, Continue, Quit)
+- [x] Engine: Choice box slide-in animation
+- [x] Engine: Procedural text blip sound effect
 - [x] Story: Day 1 — Kickoff (with 3-way choice)
 - [x] Story: Day 2 — First Standup (with 3-way choice)
 - [x] Story: Day 3 — The Demo Bomb (with 3-way choice)
+- [x] Story: Days 4-15 + 4 endings (complete story)
 - [x] Story: story.md — Full story bible with arc, characters, endings
+- [x] Story: Title cards with narration on all 15 days

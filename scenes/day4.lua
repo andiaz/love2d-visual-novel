@@ -1,4 +1,8 @@
 return {
+    title = "Day 4 — Thursday",
+    subtitle = "The Design Review",
+    narration = "Time to present the designs. Everyone has feedback. Everyone.",
+
     bg = "office_day",
     bgm = "theme",
 

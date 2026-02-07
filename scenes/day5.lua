@@ -1,4 +1,8 @@
 return {
+    title = "Day 5 — Monday",
+    subtitle = "The Scope Creep",
+    narration = "New week. New sprint. And Priya had a thought over the weekend...",
+
     bg = "office_day",
     bgm = "theme",
 

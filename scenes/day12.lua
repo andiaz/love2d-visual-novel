@@ -1,4 +1,8 @@
 return {
+    title = "Day 12 — Friday",
+    subtitle = "Demo Day",
+    narration = "This is it. The final demo. Five hours to prepare. Leadership is waiting.",
+
     bg = "office_evening",
     bgm = "theme",
 

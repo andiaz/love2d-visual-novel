@@ -74,6 +74,71 @@ function State:countFlags(flagList)
     return count
 end
 
+-- Simple table serializer (handles strings, numbers, booleans, flat tables)
+local function serialize(val, indent)
+    indent = indent or ""
+    local t = type(val)
+    if t == "string" then
+        return string.format("%q", val)
+    elseif t == "number" or t == "boolean" then
+        return tostring(val)
+    elseif t == "table" then
+        local parts = {}
+        local nextIndent = indent .. "  "
+        table.insert(parts, "{\n")
+        for k, v in pairs(val) do
+            local keyStr
+            if type(k) == "string" then
+                keyStr = "[" .. string.format("%q", k) .. "]"
+            else
+                keyStr = "[" .. tostring(k) .. "]"
+            end
+            table.insert(parts, nextIndent .. keyStr .. " = " .. serialize(v, nextIndent) .. ",\n")
+        end
+        table.insert(parts, indent .. "}")
+        return table.concat(parts)
+    end
+    return "nil"
+end
+
+function State:save(sceneName, sceneLine)
+    local data = serialize({
+        flags = self.flags,
+        relationships = self.relationships,
+        day = self.day,
+        sceneName = sceneName,
+        sceneLine = sceneLine,
+    })
+    local content = "return " .. data .. "\n"
+    love.filesystem.write("save.lua", content)
+end
+
+function State:loadSave()
+    if not love.filesystem.getInfo("save.lua") then
+        return nil
+    end
+    local content = love.filesystem.read("save.lua")
+    local fn = loadstring(content)
+    if not fn then return nil end
+    local ok, data = pcall(fn)
+    if not ok or type(data) ~= "table" then return nil end
+
+    self.flags = data.flags or {}
+    self.relationships = data.relationships or {}
+    self.day = data.day or 1
+    return data.sceneName, data.sceneLine
+end
+
+function State:hasSave()
+    return love.filesystem.getInfo("save.lua") ~= nil
+end
+
+function State:deleteSave()
+    if love.filesystem.getInfo("save.lua") then
+        love.filesystem.remove("save.lua")
+    end
+end
+
 function State:calculateEnding()
     local total = self:totalRelationship()
     local highest = self:highestRelationship()

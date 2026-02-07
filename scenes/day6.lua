@@ -1,4 +1,8 @@
 return {
+    title = "Day 6 — Tuesday",
+    subtitle = "The Research Question",
+    narration = "One week until the demo. Time to confront what we know — and what we don't.",
+
     bg = "office_day",
     bgm = "theme",
 

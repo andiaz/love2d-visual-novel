@@ -1,4 +1,8 @@
 return {
+    title = "Day 7 — Wednesday",
+    subtitle = "Dev Handoff",
+    narration = "The designs are done. Now Sam has to build them. This is where dreams meet API calls.",
+
     bg = "office_day",
     bgm = "theme",
 

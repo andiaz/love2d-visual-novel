@@ -1,4 +1,8 @@
 return {
+    title = "Day 15",
+    subtitle = "The End",
+    narration = "The sprints are over. The Jira board remains. Time to see how this ends.",
+
     bg = "office_day",
     bgm = "theme",
 

@@ -1,4 +1,7 @@
 return {
+    title = "Day 1 — Monday",
+    subtitle = "First Impressions",
+    narration = "New team. New project. A 47-slide deck and six people in a conference room.",
     bg = "office_day",
     bgm = "theme",
 

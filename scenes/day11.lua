@@ -1,4 +1,8 @@
 return {
+    title = "Day 11 — Thursday",
+    subtitle = "The Breaking Point",
+    narration = "One day left. The cracks are showing. Someone is about to say what everyone is thinking.",
+
     bg = "office_day",
     bgm = "theme",
 

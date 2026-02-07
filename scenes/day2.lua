@@ -1,4 +1,8 @@
 return {
+    title = "Day 2 — Tuesday",
+    subtitle = "The First Standup",
+    narration = "Jordan promised 15 minutes. The repo exists. The requirements do not.",
+
     bg = "office_day",
     bgm = "theme",
 

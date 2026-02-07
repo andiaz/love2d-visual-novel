@@ -1,4 +1,8 @@
 return {
+    title = "Day 8 — Thursday",
+    subtitle = "QA Strikes",
+    narration = "Demo tomorrow. Riley has been testing. Riley has found things.",
+
     bg = "office_day",
     bgm = "theme",
 

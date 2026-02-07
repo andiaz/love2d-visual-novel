@@ -1,4 +1,8 @@
 return {
+    title = "Day 3 — Wednesday",
+    subtitle = "The Demo Bomb",
+    narration = "Yesterday's choices are settling in. Then a message from leadership drops.",
+
     bg = "office_day",
     bgm = "theme",
 
