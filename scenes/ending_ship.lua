@@ -1,0 +1,33 @@
+return {
+    bg = "office_day",
+    bgm = "theme",
+
+    dialogue = {
+        { speaker = "ux", expression = "neutral", text = "ENDING: THE SHIP" },
+        { text = "..." },
+        { speaker = "ux", expression = "neutral", text = "We shipped." },
+        { speaker = "ux", expression = "neutral", text = "Not everything Priya wanted. Not as architecturally pure as Casey dreamed. Not as polished as I hoped." },
+        { speaker = "ux", expression = "neutral", text = "But it works. Users are using it. Some of them even like it." },
+        { text = "..." },
+        { speaker = "dev", expression = "neutral", text = "Hey Alex. The user feedback came in." },
+        { speaker = "ux", expression = "neutral", text = "And?" },
+        { speaker = "dev", expression = "neutral", text = "3.8 out of 5. 'Functional but needs polish.' They want better search." },
+        { speaker = "ux", expression = "neutral", text = "Better search. We always knew that." },
+        { speaker = "dev", expression = "smiling", text = "Next sprint?" },
+        { speaker = "ux", expression = "neutral", text = "Next sprint." },
+        { text = "..." },
+        { speaker = "pm", expression = "neutral", text = "Quick standup, everyone! 15 minutes!" },
+        { speaker = "qa", expression = "neutral", text = "Here we go again." },
+        { speaker = "ux", expression = "neutral", text = "But this time, something's different. The standup is 12 minutes." },
+        { speaker = "ux", expression = "neutral", text = "Jordan actually looks surprised." },
+        { text = "..." },
+        { speaker = "ux", expression = "neutral", text = "It's not perfect. The code has tech debt. The designs have compromises. The Jira board is still a mess." },
+        { speaker = "ux", expression = "neutral", text = "But the team works. We argue, we compromise, we ship." },
+        { speaker = "ux", expression = "neutral", text = "That's more than most teams can say." },
+        { text = "..." },
+        { speaker = "ux", expression = "neutral", text = "It's not perfect." },
+        { speaker = "ux", expression = "neutral", text = "But it's ours." },
+        { text = "..." },
+        { text = "THE END" },
+    }
+}

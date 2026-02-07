@@ -159,16 +159,32 @@ Alex navigated politics, advocated for users, and earned the team's trust. The p
 ## Key Flags & Tracking
 
 ### Choice Flags (set by dialogue choices)
-- `wants_research` / `eager_for_vision` / `asked_what` (Day 1)
-- `pushed_interviews` / `started_wireframes` / `needs_requirements` (Day 2)
-- `made_prototype` / `collab_with_dev` / `pushed_back_demo` (Day 3)
-- (More flags added as Days 4-15 are written)
+- Day 1: `wants_research` / `eager_for_vision` / `asked_what`
+- Day 2: `pushed_interviews` / `started_wireframes` / `needs_requirements`
+- Day 3: `made_prototype` / `collab_with_dev` / `pushed_back_demo`
+- Day 4: `prioritized_tech` / `prioritized_product` / `prioritized_users`
+- Day 5: `absorbed_scope` / `fought_scope` / `compromised_scope`
+- Day 6: `followed_data` / `followed_vision` / `found_middle`
+- Day 7: `simplified_ux` / `kept_complex_ux` / `paired_with_dev`
+- Day 8: `took_ownership` / `shared_blame` / `hid_bugs`
+- Day 9: `supported_pivot` / `resisted_pivot` / `negotiated_pivot`
+- Day 10: `pulled_allnighter` / `set_boundaries` / `rallied_team`
+- Day 11: `backed_riley` / `refocused_team` / `owned_mistakes`
+- Day 12: `polished_subset` / `showed_everything` / `honest_demo`
+- Day 13: `retro_research` / `retro_communication` / `retro_trust`
+- Day 14: `final_proud` / `final_users` / `final_grateful`
 
 ### Relationship Scores
-Tracked per character: `dev`, `pm`, `po`, `qa`, `arch`. Each choice can adjust these by +1/-1 or +2/-2. Final ending is determined by the combination of flags and total/individual relationship scores.
+Tracked per character: `dev`, `pm`, `po`, `qa`, `arch`. Each choice adjusts these by +1/-1 or +2/-2 (occasionally +3). Final ending is determined by the combination of flags and total/individual relationship scores.
 
-### Ending Calculation
-1. Count total pushback flags vs. compliance flags
-2. Sum relationship scores across all characters
-3. Check individual character relationship highs/lows
-4. Select ending based on the combination
+### Ending Calculation (implemented in engine/state.lua)
+1. **The Promotion**: research flags >= 3 AND total relationship >= 15 AND pushback > compliance
+2. **The Pivot**: PO has highest relationship score AND scope change flags >= 2
+3. **The Burnout**: compliance > pushback AND total relationship < 10
+4. **The Ship**: default (balanced play)
+
+Compliance flags: `eager_for_vision`, `started_wireframes`, `made_prototype`, `prioritized_product`, `absorbed_scope`, `followed_vision`, `kept_complex_ux`, `hid_bugs`, `supported_pivot`, `pulled_allnighter`, `showed_everything`
+
+Pushback flags: `wants_research`, `pushed_interviews`, `pushed_back_demo`, `prioritized_users`, `fought_scope`, `followed_data`, `took_ownership`, `resisted_pivot`, `set_boundaries`, `backed_riley`, `polished_subset`, `honest_demo`
+
+Research flags: `wants_research`, `pushed_interviews`, `followed_data`, `prioritized_users`, `retro_research`

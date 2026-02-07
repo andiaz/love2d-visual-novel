@@ -76,7 +76,12 @@ function Scene:setLine(line)
     if line.goto and (not line.text or line.text == "") then
         -- Check condition on goto lines
         if State:check(line.condition) then
-            self:loadScene(line.goto)
+            -- Special goto: calculate ending dynamically
+            if line.goto == "$ending" then
+                self:loadScene(State:calculateEnding())
+            else
+                self:loadScene(line.goto)
+            end
             return
         else
             -- Condition failed, skip to next line

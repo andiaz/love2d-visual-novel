@@ -86,23 +86,24 @@ Use same style prefix but: `anime background art, no characters, wide shot, 800x
 - [ ] Source SFX (notification, keyboard typing, door open, Slack ping, coffee pour)
 
 ## Story Content
-- [ ] Day 4 — The Design Review (everyone critiques Alex's work)
-- [ ] Day 5 — The Scope Creep (Priya's weekend idea)
-- [ ] Day 6 — User Research vs. Designing Blind
-- [ ] Day 7 — Dev Handoff (Sam finds issues in the designs)
-- [ ] Day 8 — QA Strikes (Riley breaks everything)
-- [ ] Day 9 — The Pivot (Priya changes direction mid-sprint)
-- [ ] Day 10 — The Long Night (crunch begins)
-- [ ] Day 11 — The Breaking Point (someone snaps)
-- [ ] Day 12 — Demo Eve (final preparations)
-- [ ] Day 13 — The Demo (presentation to leadership)
-- [ ] Day 14 — The Aftermath (post-demo reactions)
-- [ ] Day 15 — The End (reflection + ending trigger)
-- [ ] Ending: The Burnout
-- [ ] Ending: The Ship
-- [ ] Ending: The Pivot
-- [ ] Ending: The Promotion
-- [ ] Write branching variants for days with major divergence points
+- [x] Day 4 — The Design Review (everyone critiques Alex's work)
+- [x] Day 5 — The Scope Creep (Priya's weekend idea)
+- [x] Day 6 — User Research vs. Designing Blind
+- [x] Day 7 — Dev Handoff (Sam finds issues in the designs)
+- [x] Day 8 — QA Strikes (Riley breaks everything)
+- [x] Day 9 — The Pivot (Priya changes direction mid-sprint)
+- [x] Day 10 — The Long Night (crunch begins)
+- [x] Day 11 — The Breaking Point (Riley snaps)
+- [x] Day 12 — Demo Eve (final preparations)
+- [x] Day 13 — The Demo (leadership feedback + retrospective)
+- [x] Day 14 — The Aftermath (team says goodbye)
+- [x] Day 15 — The End (reflection + ending router)
+- [x] Ending: The Burnout
+- [x] Ending: The Ship
+- [x] Ending: The Pivot
+- [x] Ending: The Promotion
+- [x] Ending calculation logic in engine/state.lua
+- [ ] Write branching day variants for major divergence points (optional — game works without these)
 
 ## Polish
 - [ ] Add conf.lua for window configuration

@@ -58,5 +58,7 @@ return {
         -- End of day
         { speaker = "ux", expression = "neutral", text = "Day 3. We have no requirements, a demo deadline, and a 47-slide mood board." },
         { speaker = "ux", expression = "neutral", text = "But hey — at least the Jira board is empty. Because nobody's using it." },
+
+        { text = "", goto = "day4" }
     }
 }
