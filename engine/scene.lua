@@ -2,6 +2,10 @@ local utf8 = require("utf8")
 local State = require("engine.state")
 local Characters = require("engine.characters")
 
+local function scenePath(name)
+    return "scenes." .. (State.playingAs or "ux") .. "." .. name
+end
+
 local Scene = {
     current = nil,
     currentLine = 1,
@@ -149,8 +153,9 @@ function Scene:loadScene(name)
     end
 
     -- Actually load the scene (called after fade-out completes)
-    package.loaded["scenes." .. name] = nil
-    self.current = require("scenes." .. name)
+    local path = scenePath(name)
+    package.loaded[path] = nil
+    self.current = require(path)
     self.currentName = name
     self.currentLine = 1
     self.selectedChoice = 1
@@ -186,8 +191,9 @@ end
 -- Internal: actually load scene after fade
 function Scene:_doLoadScene(name)
     self.fadePhase = "none"
-    package.loaded["scenes." .. name] = nil
-    self.current = require("scenes." .. name)
+    local path = scenePath(name)
+    package.loaded[path] = nil
+    self.current = require(path)
     self.currentName = name
     self.currentLine = 1
     self.selectedChoice = 1
@@ -231,8 +237,9 @@ function Scene:loadFromSave()
     if not sceneName then return false end
 
     -- Load the scene directly (skip fade for resume)
-    package.loaded["scenes." .. sceneName] = nil
-    self.current = require("scenes." .. sceneName)
+    local path = scenePath(sceneName)
+    package.loaded[path] = nil
+    self.current = require(path)
     self.currentName = sceneName
     self.currentLine = sceneLine or 1
     self.selectedChoice = 1

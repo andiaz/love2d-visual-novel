@@ -1,0 +1,33 @@
+return {
+    title = "The Burnout",
+    subtitle = "Ending",
+    narration = "The product shipped. The bug log is full. You're empty.",
+    bg = "ending_burnout",
+    bgm = "late_night",
+
+    dialogue = {
+        { speaker = "qa", expression = "deadpan", text = "It has every feature Priya wanted. Every architectural pattern Casey designed. Every shortcut Jordan scheduled." },
+        { speaker = "qa", expression = "deadpan", text = "It does everything. Nothing well." },
+        { text = "..." },
+        { speaker = "qa", expression = "deadpan", text = "I open the bug tracker. 312 open tickets. 87 of them are mine. None of them have been triaged in two weeks." },
+        { speaker = "qa", expression = "deadpan", text = "I feel nothing." },
+        { text = "..." },
+        { speaker = "qa", expression = "deadpan", text = "I said yes to every scope change. I tested every feature. I filed every bug. I never stopped being polite." },
+        { speaker = "qa", expression = "deadpan", text = "I thought being thorough was being a good QA. Turns out thorough only works if somebody reads the reports." },
+        { text = "..." },
+        { speaker = "qa", expression = "deadpan", text = "My regression suite has 1,400 cases. 312 are red. 87 of those are blocking. None of them will be fixed before the next sprint." },
+        { speaker = "qa", expression = "deadpan", text = "I haven't said the word 'no' in six weeks. I have not said anything sharp in six weeks. I held it all in. I thought professionalism was the answer." },
+        { text = "..." },
+        { speaker = "qa", expression = "deadpan", text = "Sam left for a startup. Casey is 'consulting.' Alex is on PTO." },
+        { speaker = "qa", expression = "deadpan", text = "Priya is already planning Project Chimera 2.0. She has 63 slides. None of them mention QA." },
+        { speaker = "qa", expression = "deadpan", text = "Jordan sent me a calendar invite for the kickoff. I declined it." },
+        { text = "..." },
+        { speaker = "qa", expression = "deadpan", text = "I open LinkedIn. I update my status." },
+        { speaker = "qa", expression = "deadpan", text = "'Open to Work.'" },
+        { text = "..." },
+        { speaker = "qa", expression = "deadpan", text = "I tested exactly what was asked for. I filed exactly what I found. I stayed exactly as polite as I needed to be." },
+        { speaker = "qa", expression = "deadpan", text = "That was the problem." },
+        { text = "..." },
+        { text = "", goto = "$menu" },
+    }
+}

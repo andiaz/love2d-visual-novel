@@ -1,0 +1,33 @@
+return {
+    title = "The Ship",
+    subtitle = "Ending",
+    narration = "Not the deck I pitched. Better than the deck I pitched.",
+    bg = "ending_ship",
+    bgm = "Sprint Cycle (UX Nights)",
+
+    dialogue = {
+        { speaker = "po", expression = "neutral", text = "We shipped." },
+        { speaker = "po", expression = "neutral", text = "Not all 47 slides. Not the leaderboard. Not the gamification. Not the AI." },
+        { speaker = "po", expression = "neutral", text = "But the core vision -- the thing I actually cared about -- it's real now. It's in users' hands." },
+        { text = "..." },
+        { speaker = "ux", expression = "neutral", text = "Hey Priya. The user feedback came in." },
+        { speaker = "po", expression = "neutral", text = "And?" },
+        { speaker = "ux", expression = "neutral", text = "3.8 out of 5. 'Functional but needs polish.' They want better search." },
+        { speaker = "po", expression = "excited", text = "Better search. We always knew that. I'm writing the ticket right now." },
+        { speaker = "ux", expression = "excited", text = "Next sprint?" },
+        { speaker = "po", expression = "excited", text = "Next sprint." },
+        { text = "..." },
+        { speaker = "pm", expression = "cheerful", text = "Quick standup, everyone! 15 minutes!" },
+        { speaker = "qa", expression = "smirk", text = "Here we go again." },
+        { speaker = "po", expression = "neutral", text = "(I notice the standup is 12 minutes today. Jordan looks shocked.)" },
+        { text = "..." },
+        { speaker = "po", expression = "neutral", text = "I had to cut three quarters of the deck. The hard part wasn't the cutting. It was admitting which slides were never about users." },
+        { speaker = "po", expression = "neutral", text = "But the team works. We argue, we compromise, we ship." },
+        { speaker = "po", expression = "excited", text = "That's more than most teams can say." },
+        { text = "..." },
+        { speaker = "po", expression = "neutral", text = "It's not the deck." },
+        { speaker = "po", expression = "excited", text = "It's better." },
+        { text = "..." },
+        { text = "", goto = "$menu" },
+    }
+}

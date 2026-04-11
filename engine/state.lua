@@ -1,7 +1,8 @@
 local State = {
     flags = {},
     relationships = {},
-    day = 1
+    day = 1,
+    playingAs = "ux",
 }
 
 function State:set(key, val)
@@ -39,10 +40,13 @@ function State:getRelation(who)
     return self.relationships[who] or 0
 end
 
-function State:reset()
+function State:reset(playingAs)
     self.flags = {}
     self.relationships = {}
     self.day = 1
+    if playingAs then
+        self.playingAs = playingAs
+    end
 end
 
 function State:totalRelationship()
@@ -106,6 +110,7 @@ function State:save(sceneName, sceneLine)
         flags = self.flags,
         relationships = self.relationships,
         day = self.day,
+        playingAs = self.playingAs,
         sceneName = sceneName,
         sceneLine = sceneLine,
     })
@@ -126,6 +131,7 @@ function State:loadSave()
     self.flags = data.flags or {}
     self.relationships = data.relationships or {}
     self.day = data.day or 1
+    self.playingAs = data.playingAs or "ux"
     return data.sceneName, data.sceneLine
 end
 

@@ -1,8 +1,16 @@
 local Scene = require("engine.scene")
 local State = require("engine.state")
+local Characters = require("engine.characters")
 
 local fonts = {}
-local gameMode = "menu" -- "menu", "playing", "resume"
+local gameMode = "menu" -- "menu", "charselect", "playing", "resume"
+
+-- Character select state
+-- Order matters: this defines the grid layout (3 columns × 2 rows)
+local charSelectIds = { "ux", "dev", "pm", "po", "qa", "arch" }
+local charSelectIndex = 1
+local charSelectHovered = 0
+local charPortraits = {}
 
 -- Menu state
 local menuOptions = {}
@@ -61,7 +69,14 @@ function buildMenuOptions()
 end
 
 function startNewGame()
-    State:reset()
+    -- Open character select instead of jumping straight into day 1
+    charSelectIndex = 1
+    charSelectHovered = 0
+    gameMode = "charselect"
+end
+
+function launchAsCharacter(charId)
+    State:reset(charId)
     State:deleteSave()
     gameMode = "playing"
     Scene:loadScene("day1")
@@ -149,6 +164,32 @@ function love.keypressed(key)
         return
     end
 
+    -- Character select mode
+    if gameMode == "charselect" then
+        if key == "escape" then
+            gameMode = "menu"
+            return
+        end
+        local cols = 3
+        if key == "left" then
+            charSelectIndex = charSelectIndex - 1
+            if charSelectIndex < 1 then charSelectIndex = #charSelectIds end
+        elseif key == "right" then
+            charSelectIndex = charSelectIndex + 1
+            if charSelectIndex > #charSelectIds then charSelectIndex = 1 end
+        elseif key == "up" then
+            charSelectIndex = charSelectIndex - cols
+            if charSelectIndex < 1 then charSelectIndex = charSelectIndex + #charSelectIds end
+        elseif key == "down" then
+            charSelectIndex = charSelectIndex + cols
+            if charSelectIndex > #charSelectIds then charSelectIndex = charSelectIndex - #charSelectIds end
+        elseif key == "space" or key == "return" then
+            if Scene.sfx.click then Scene.sfx.click:play() end
+            launchAsCharacter(charSelectIds[charSelectIndex])
+        end
+        return
+    end
+
     -- Resume card mode
     if gameMode == "resume" then
         if key == "space" or key == "return" then
@@ -192,6 +233,19 @@ function love.mousepressed(x, y, button)
         return
     end
 
+    if gameMode == "charselect" then
+        for i, _ in ipairs(charSelectIds) do
+            local cx, cy, cw, ch = getCharCardRect(i)
+            if x >= cx and x <= cx + cw and y >= cy and y <= cy + ch then
+                charSelectIndex = i
+                if Scene.sfx.click then Scene.sfx.click:play() end
+                launchAsCharacter(charSelectIds[i])
+                return
+            end
+        end
+        return
+    end
+
     Scene:mousepressed(x, y, button)
 end
 
@@ -210,7 +264,53 @@ function love.mousemoved(x, y)
         return
     end
 
+    if gameMode == "charselect" then
+        charSelectHovered = 0
+        for i, _ in ipairs(charSelectIds) do
+            local cx, cy, cw, ch = getCharCardRect(i)
+            if x >= cx and x <= cx + cw and y >= cy and y <= cy + ch then
+                charSelectHovered = i
+                return
+            end
+        end
+        return
+    end
+
     Scene:mousemoved(x, y)
+end
+
+function getCharSelectLayout()
+    local screenWidth, screenHeight = love.graphics.getDimensions()
+    local cols = 3
+    local rows = 2
+    local cardWidth = 210
+    local cardHeight = 175
+    local hGap = 18
+    local vGap = 14
+    local gridWidth = cols * cardWidth + (cols - 1) * hGap
+    -- Push grid below the header + tagline area, leave room for the bottom hint bar
+    local startX = (screenWidth - gridWidth) / 2
+    local startY = 100
+    return startX, startY, cardWidth, cardHeight, hGap, vGap, cols
+end
+
+function getCharCardRect(i)
+    local startX, startY, cardWidth, cardHeight, hGap, vGap, cols = getCharSelectLayout()
+    local col = (i - 1) % cols
+    local row = math.floor((i - 1) / cols)
+    local x = startX + col * (cardWidth + hGap)
+    local y = startY + row * (cardHeight + vGap)
+    return x, y, cardWidth, cardHeight
+end
+
+function getCharPortrait(charId)
+    if not charPortraits[charId] then
+        local path = "assets/characters/" .. charId .. "_neutral.png"
+        if love.filesystem.getInfo(path) then
+            charPortraits[charId] = love.graphics.newImage(path)
+        end
+    end
+    return charPortraits[charId]
 end
 
 function getMenuLayout()
@@ -247,6 +347,11 @@ function love.draw()
             love.graphics.setColor(0, 0, 0, menuFadeAlpha)
             love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
         end
+        return
+    end
+
+    if gameMode == "charselect" then
+        drawCharSelect(screenWidth, screenHeight)
         return
     end
 
@@ -496,6 +601,109 @@ function drawMenu(screenWidth, screenHeight)
     love.graphics.print(navHint, screenWidth - navWidth - 15, screenHeight - 25)
     love.graphics.setColor(0.78, 0.78, 0.72, 0.7)
     love.graphics.print(navHint, screenWidth - navWidth - 16, screenHeight - 26)
+end
+
+function drawCharSelect(screenWidth, screenHeight)
+    -- Background: reuse title BG with darker overlay so cards pop
+    if titleBG then
+        local bgScaleX = screenWidth / titleBG:getWidth()
+        local bgScaleY = screenHeight / titleBG:getHeight()
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(titleBG, 0, 0, 0, bgScaleX, bgScaleY)
+        love.graphics.setColor(0.02, 0.02, 0.08, 0.85)
+        love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+    else
+        love.graphics.setColor(0.05, 0.05, 0.1, 1)
+        love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+    end
+
+    -- Header
+    love.graphics.setFont(fonts.titleSub)
+    local header = "Choose Your Role"
+    local headerWidth = fonts.titleSub:getWidth(header)
+    love.graphics.setColor(0.87, 0.72, 0.25, 1)
+    love.graphics.print(header, (screenWidth - headerWidth) / 2, 20)
+
+    -- Tagline for the focused character (replaces the static subtitle)
+    local selectedChar = Characters[charSelectIds[charSelectIndex]]
+    if selectedChar and selectedChar.tagline then
+        love.graphics.setFont(fonts.menuSmall)
+        local tagline = selectedChar.tagline
+        local tagWidth = fonts.menuSmall:getWidth(tagline)
+        love.graphics.setColor(0, 0, 0, 0.5)
+        love.graphics.print(tagline, (screenWidth - tagWidth) / 2 + 1, 51)
+        love.graphics.setColor(0.98, 1.0, 1.0, 0.92)
+        love.graphics.print(tagline, (screenWidth - tagWidth) / 2, 50)
+    end
+
+    local pulse = 0.08 * math.sin(love.timer.getTime() * 2.5)
+
+    for i, charId in ipairs(charSelectIds) do
+        local cx, cy, cw, ch = getCharCardRect(i)
+        local char = Characters[charId]
+        local isSelected = (i == charSelectIndex)
+        local isHovered = (i == charSelectHovered)
+        local isActive = isSelected or isHovered
+
+        -- Card shadow
+        love.graphics.setColor(0, 0, 0, 0.4)
+        love.graphics.rectangle("fill", cx + 3, cy + 3, cw, ch, 8, 8)
+
+        -- Card background
+        if isActive then
+            love.graphics.setColor(0.0 + pulse, 0.28 + pulse, 0.67 + pulse, 0.92)
+        else
+            love.graphics.setColor(0.04, 0.04, 0.1, 0.9)
+        end
+        love.graphics.rectangle("fill", cx, cy, cw, ch, 8, 8)
+
+        -- Portrait inside the card (top half)
+        local portrait = getCharPortrait(charId)
+        if portrait then
+            local portraitArea = ch - 70
+            local pScale = portraitArea / portrait:getHeight()
+            local pWidth = portrait:getWidth() * pScale
+            local pHeight = portraitArea
+            local pX = cx + (cw - pWidth) / 2
+            local pY = cy + 8
+            love.graphics.setColor(1, 1, 1)
+            love.graphics.draw(portrait, pX, pY, 0, pScale, pScale)
+        end
+
+        -- Name
+        love.graphics.setFont(fonts.menu)
+        local nameLine = char.name
+        local nameWidth = fonts.menu:getWidth(nameLine)
+        love.graphics.setColor(char.color)
+        love.graphics.print(nameLine, cx + (cw - nameWidth) / 2, cy + ch - 60)
+
+        -- Title (role)
+        love.graphics.setFont(fonts.menuSmall)
+        local titleLine = char.title
+        local titleWidth = fonts.menuSmall:getWidth(titleLine)
+        love.graphics.setColor(0.98, 1.0, 1.0, 0.85)
+        love.graphics.print(titleLine, cx + (cw - titleWidth) / 2, cy + ch - 32)
+
+        -- Border — gold when active
+        if isActive then
+            love.graphics.setColor(0.87, 0.72, 0.25, 0.9 + pulse * 3)
+            love.graphics.setLineWidth(2)
+        else
+            love.graphics.setColor(0.4, 0.38, 0.32, 0.5)
+            love.graphics.setLineWidth(1)
+        end
+        love.graphics.rectangle("line", cx, cy, cw, ch, 8, 8)
+        love.graphics.setLineWidth(1)
+    end
+
+    -- Bottom hint bar
+    love.graphics.setColor(0, 0, 0, 0.4)
+    love.graphics.rectangle("fill", 0, screenHeight - 36, screenWidth, 36)
+    love.graphics.setFont(fonts.menuSmall)
+    love.graphics.setColor(0.78, 0.78, 0.72, 0.8)
+    local hint = "Arrows / mouse to choose  ·  SPACE to confirm  ·  ESC to go back"
+    local hintWidth = fonts.menuSmall:getWidth(hint)
+    love.graphics.print(hint, (screenWidth - hintWidth) / 2, screenHeight - 25)
 end
 
 function drawResumeCard(screenWidth, screenHeight)

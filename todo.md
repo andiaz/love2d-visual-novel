@@ -119,6 +119,139 @@ Use same style prefix but: `anime background art, no characters, wide shot, 800x
 - [x] Ending calculation logic in engine/state.lua
 - [ ] Write branching day variants for major divergence points (optional — game works without these)
 
+## Character Selection (Engine + UI)
+
+- [x] Engine: Add `playable` + `tagline` fields to `engine/characters.lua`
+- [x] Engine: Add `State.playingAs` + persist in save/load (default "ux" for back-compat)
+- [x] Engine: Route `Scene:_doLoadScene` through `scenes/<playingAs>/`
+- [x] Engine: New `charselect` gameMode in `main.lua`
+- [x] UI: Character select screen (3×2 grid of portrait cards, keyboard + mouse)
+- [x] Move existing `scenes/day*.lua` + `scenes/ending_*.lua` into `scenes/ux/`
+- [x] Test: all 6 characters selectable, each boots into their own day 1, save/load round-trips per character
+
+## Per-Character Storylines (Writing Backlog)
+
+For each of the 5 new playable characters, the same 15-day arc + 4 endings need to be written from that role's perspective. The UX route already exists and will be moved into `scenes/ux/`. Each role's perspective should make the player *feel* what that IT job is like — purely experiential, no explainers.
+
+### Sam (Dev) route — `scenes/dev/`
+
+- [x] day1 — Kickoff from a developer's perspective (sizing the unknown, vague requirements)
+- [x] day2 — First Standup (estimating the unestimable)
+- [x] day3 — The Demo Bomb (the "works on my machine" moment)
+- [x] day4 — The Design Review (pushing back on impossible designs)
+- [x] day5 — The Scope Creep (the weekend idea that breaks the data model)
+- [x] day6 — Tech debt vs. new features
+- [x] day7 — Dev Handoff received (now you're the one finding issues)
+- [x] day8 — QA Strikes (Riley files 30 bugs against your code)
+- [x] day9 — The Pivot (refactoring under pressure)
+- [x] day10 — The Long Night (the crunch coding session)
+- [x] day11 — The Breaking Point (merge conflicts and exhaustion)
+- [x] day12 — Demo Eve (last-minute hotfix)
+- [x] day13 — The Demo (the live demo that almost crashes)
+- [x] day14 — The Aftermath (post-mortem on what broke)
+- [x] day15 — The End (reflection + ending router)
+- [x] Ending: The Ship (Dev variant)
+- [x] Ending: The Promotion (Tech Lead promotion)
+- [x] Ending: The Pivot (a half-built system Dev no longer recognizes)
+- [x] Ending: The Burnout (Dev variant)
+
+### Jordan (PM) route — `scenes/pm/`
+
+- [x] day1 — Kickoff (wrangling the room, setting expectations)
+- [x] day2 — First Standup (the standup that won't end)
+- [x] day3 — The Demo Bomb (managing the fallout)
+- [x] day4 — The Design Review (mediating between design and dev)
+- [x] day5 — The Scope Creep (defending the timeline)
+- [x] day6 — Stakeholder check-in (status reports, risk register)
+- [x] day7 — Dev Handoff (chasing down blockers)
+- [x] day8 — QA Strikes (re-planning around bugs)
+- [x] day9 — The Pivot (re-baselining the whole plan)
+- [x] day10 — The Long Night (keeping the team fed and sane)
+- [x] day11 — The Breaking Point (a team member breaks down)
+- [x] day12 — Demo Eve (rehearsals and contingencies)
+- [x] day13 — The Demo (the leadership Q&A)
+- [x] day14 — The Aftermath (retrospective facilitation)
+- [x] day15 — The End (reflection + ending router)
+- [x] Ending: The Ship (PM variant)
+- [x] Ending: The Promotion (Senior PM / Program Manager)
+- [x] Ending: The Pivot (PM variant)
+- [x] Ending: The Burnout (PM variant)
+
+### Priya (PO) route — `scenes/po/`
+
+- [x] day1 — Kickoff (presenting the vision)
+- [x] day2 — First Standup (defending priorities)
+- [x] day3 — The Demo Bomb (your vision, misunderstood)
+- [x] day4 — The Design Review (translating vision into specs)
+- [x] day5 — The Scope Creep (the weekend idea is now YOUR weekend idea)
+- [x] day6 — Stakeholder pressure (the executive ask)
+- [x] day7 — Dev Handoff (negotiating cuts)
+- [x] day8 — QA Strikes (which bugs are blockers?)
+- [x] day9 — The Pivot (you make the call to change direction)
+- [x] day10 — The Long Night (rewriting acceptance criteria at midnight)
+- [x] day11 — The Breaking Point (the team blames you)
+- [x] day12 — Demo Eve (final scope cuts)
+- [x] day13 — The Demo (presenting to leadership)
+- [x] day14 — The Aftermath (the next roadmap)
+- [x] day15 — The End (reflection + ending router)
+- [x] Ending: The Ship (PO variant)
+- [x] Ending: The Promotion (Head of Product)
+- [x] Ending: The Pivot (PO variant — your vision realized?)
+- [x] Ending: The Burnout (PO variant)
+
+### Riley (QA) route — `scenes/qa/`
+
+- [x] day1 — Kickoff (test planning while everyone else dreams)
+- [x] day2 — First Standup (being ignored)
+- [x] day3 — The Demo Bomb (you saw it coming)
+- [x] day4 — The Design Review (raising untested edge cases)
+- [x] day5 — The Scope Creep (more surface area to test)
+- [x] day6 — Building the regression suite
+- [x] day7 — Dev Handoff (finally something to test)
+- [x] day8 — QA Strikes (you file the 30 bugs — your day in the sun)
+- [x] day9 — The Pivot (your test plan invalidated)
+- [x] day10 — The Long Night (regression run after regression run)
+- [x] day11 — The Breaking Point (you snap at the team)
+- [x] day12 — Demo Eve (last-minute smoke tests)
+- [x] day13 — The Demo (will it crash on stage?)
+- [x] day14 — The Aftermath (the bug you missed)
+- [x] day15 — The End (reflection + ending router)
+- [x] Ending: The Ship (QA variant — the underappreciated hero)
+- [x] Ending: The Promotion (QA Lead / SDET)
+- [x] Ending: The Pivot (QA variant)
+- [x] Ending: The Burnout (QA variant)
+
+### Casey (Architect) route — `scenes/arch/`
+
+- [x] day1 — Kickoff (sketching the system on a napkin)
+- [x] day2 — First Standup (being asked "is this possible?")
+- [x] day3 — The Demo Bomb (architectural drift)
+- [x] day4 — The Design Review (aligning UI to data model)
+- [x] day5 — The Scope Creep (over-engineering vs. quick wins)
+- [x] day6 — The whiteboard session nobody understands
+- [x] day7 — Dev Handoff (Sam ignores your patterns)
+- [x] day8 — QA Strikes (architectural bugs vs. implementation bugs)
+- [x] day9 — The Pivot (the architecture has to bend or break)
+- [x] day10 — The Long Night (refactoring foundations)
+- [x] day11 — The Breaking Point (your design rejected)
+- [x] day12 — Demo Eve (will the architecture hold?)
+- [x] day13 — The Demo (technical Q&A)
+- [x] day14 — The Aftermath (the technical debt diary)
+- [x] day15 — The End (reflection + ending router)
+- [x] Ending: The Ship (Architect variant)
+- [x] Ending: The Promotion (Principal Engineer / Staff)
+- [x] Ending: The Pivot (Architect variant)
+- [x] Ending: The Burnout (Architect variant)
+
+### Optional polish (future)
+
+- [ ] Per-character intro card on selection (animated transition into day 1)
+- [ ] Character-specific BGM theme on the select screen
+- [ ] Per-character ending formulas in `State:calculateEnding()` if roles diverge enough
+- [ ] New portrait expressions as writing demands them
+- [ ] Update `story.md` story bible with the per-character perspective notes
+- [ ] Update README with the character-select feature
+
 ## Polish
 
 - [x] Animate choice boxes appearing (slide in + fade, staggered per choice)

@@ -1,0 +1,33 @@
+return {
+    title = "The Burnout",
+    subtitle = "Ending",
+    narration = "The product shipped. The schedule held. You didn't.",
+    bg = "ending_burnout",
+    bgm = "late_night",
+
+    dialogue = {
+        { speaker = "pm", expression = "stressed", text = "It has every feature Priya wanted. Every architectural pattern Casey designed. Every shortcut I scheduled." },
+        { speaker = "pm", expression = "stressed", text = "It does everything. Nothing well." },
+        { text = "..." },
+        { speaker = "pm", expression = "stressed", text = "I open the Jira board. Every ticket is green. Every milestone hit. Every status report sent." },
+        { speaker = "pm", expression = "stressed", text = "I feel nothing." },
+        { text = "..." },
+        { speaker = "pm", expression = "stressed", text = "I said yes to every scope change. Every impossible deadline. Every 'can we just.'" },
+        { speaker = "pm", expression = "stressed", text = "I thought being a good PM meant making everyone happy. Turns out it means making no one happy together." },
+        { text = "..." },
+        { speaker = "pm", expression = "stressed", text = "My calendar from last month: 89 meetings. 47 of them were status updates. 12 of them were 'quick syncs' that ran 90 minutes." },
+        { speaker = "pm", expression = "stressed", text = "I haven't run a real retro in two months. There's never time. There's always another fire." },
+        { text = "..." },
+        { speaker = "pm", expression = "stressed", text = "Sam left for a startup. Riley transferred. Casey is 'consulting.' Alex is on PTO." },
+        { speaker = "pm", expression = "stressed", text = "Priya is already planning Project Chimera 2.0. She has 63 slides this time." },
+        { speaker = "pm", expression = "stressed", text = "I sent myself a calendar invite for the kickoff. I haven't accepted it." },
+        { text = "..." },
+        { speaker = "pm", expression = "stressed", text = "I open LinkedIn. I update my status." },
+        { speaker = "pm", expression = "stressed", text = "'Open to Work.'" },
+        { text = "..." },
+        { speaker = "pm", expression = "stressed", text = "I delivered exactly what was asked for. Every sprint. Every status report. Every milestone." },
+        { speaker = "pm", expression = "stressed", text = "That was the problem." },
+        { text = "..." },
+        { text = "", goto = "$menu" },
+    }
+}

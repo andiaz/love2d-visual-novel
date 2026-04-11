@@ -1,0 +1,33 @@
+return {
+    title = "The Burnout",
+    subtitle = "Ending",
+    narration = "The product shipped. The build stayed green. You didn't.",
+    bg = "ending_burnout",
+    bgm = "late_night",
+
+    dialogue = {
+        { speaker = "dev", expression = "tired", text = "It has every feature Priya wanted. Every architectural pattern Casey designed. Every shortcut Jordan scheduled." },
+        { speaker = "dev", expression = "frustrated", text = "It does everything. Nothing well." },
+        { text = "..." },
+        { speaker = "dev", expression = "tired", text = "I open the Jira board. Every ticket green. Every PR merged. CI all passing." },
+        { speaker = "dev", expression = "frustrated", text = "I feel nothing." },
+        { text = "..." },
+        { speaker = "dev", expression = "tired", text = "I said yes to every scope change. Every 'can we just.' Every all-nighter." },
+        { speaker = "dev", expression = "tired", text = "I thought being a team player meant being a yes machine. Turns out yes machines just write more bugs." },
+        { text = "..." },
+        { speaker = "dev", expression = "tired", text = "I haven't seen daylight in two weeks. My commit graph has 47 entries between 2 AM and 4 AM." },
+        { speaker = "dev", expression = "frustrated", text = "I committed something at 3:14 AM that just says 'fix the thing' and I cannot remember what the thing was." },
+        { text = "..." },
+        { speaker = "dev", expression = "tired", text = "Riley transferred to another team. Alex is taking PTO. Casey is 'consulting.'" },
+        { speaker = "dev", expression = "tired", text = "Priya is already planning Project Chimera 2.0. She has 63 slides this time." },
+        { speaker = "dev", expression = "tired", text = "Jordan sent me a calendar invite for the kickoff. I declined it." },
+        { text = "..." },
+        { speaker = "dev", expression = "tired", text = "I open LinkedIn. I update my status." },
+        { speaker = "dev", expression = "tired", text = "'Open to Work.'" },
+        { text = "..." },
+        { speaker = "dev", expression = "tired", text = "I shipped exactly what was asked for." },
+        { speaker = "dev", expression = "frustrated", text = "That was the problem." },
+        { text = "..." },
+        { text = "", goto = "$menu" },
+    }
+}
