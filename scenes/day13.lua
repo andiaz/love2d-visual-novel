@@ -1,10 +1,10 @@
 return {
-    title = "Day 13 — Monday",
+    title = "Day 13 -- Monday",
     subtitle = "The Feedback",
     narration = "The demo is done. Leadership has spoken. Time to face the music.",
 
-    bg = "office_day",
-    bgm = "theme",
+    bg = "meeting_room",
+    bgm = "Sprint Cycle (UX Nights)",
 
     dialogue = {
         { speaker = "ux", expression = "neutral", text = "Monday. The week after the demo. Time to face the music." },
@@ -12,7 +12,7 @@ return {
         -- Leadership feedback arrives
         { speaker = "pm", expression = "neutral", text = "Team meeting. I have the feedback from leadership." },
         { speaker = "dev", expression = "neutral", text = "On a scale of 'fired' to 'promoted,' where are we?" },
-        { speaker = "pm", expression = "neutral", text = "They liked it. With caveats." },
+        { speaker = "pm", expression = "cheerful", text = "They liked it. With caveats." },
         { speaker = "po", expression = "neutral", text = "What kind of caveats?" },
 
         -- Different reactions based on demo approach
@@ -22,7 +22,7 @@ return {
 
         -- The verdict
         { speaker = "pm", expression = "neutral", text = "Bottom line: Project Chimera is greenlit for another sprint. We have two more weeks." },
-        { speaker = "po", expression = "neutral", text = "Two more weeks! We can add so much—" },
+        { speaker = "po", expression = "excited", text = "Two more weeks! We can add so much--" },
         { speaker = "dev", expression = "neutral", text = "Priya." },
         { speaker = "po", expression = "neutral", text = "Right. Retrospective first. Sorry." },
 
@@ -31,8 +31,8 @@ return {
 
         { speaker = "dev", expression = "neutral", text = "What went well: we shipped something. What didn't: everything else." },
         { speaker = "qa", expression = "neutral", text = "What went well: we found 47 bugs before the demo. What didn't: 12 of them are still there." },
-        { speaker = "arch", expression = "neutral", text = "What went well: the architecture held up. Barely. What didn't: I should have been more flexible early on." },
-        { speaker = "po", expression = "neutral", text = "What went well: the vision is alive! What didn't: I changed the vision too many times." },
+        { speaker = "arch", expression = "concerned", text = "What went well: the architecture held up. Barely. What didn't: I should have been more flexible early on." },
+        { speaker = "po", expression = "excited", text = "What went well: the vision is alive! What didn't: I changed the vision too many times." },
         { speaker = "pm", expression = "neutral", text = "Alex? Your retro?" },
 
         { speaker = "ux", expression = "neutral", text = "Honest reflection time.",
@@ -47,7 +47,7 @@ return {
         { speaker = "dev", expression = "neutral", text = "Agreed. Pairing sessions every other day.", condition = "retro_communication" },
         { speaker = "pm", expression = "neutral", text = "That might be the most important thing anyone's said in this project.", condition = "retro_trust" },
 
-        { speaker = "ux", expression = "neutral", text = "The retro. Where teams either learn or repeat." },
+        { speaker = "ux", expression = "thinking", text = "The retro. Where teams either learn or repeat." },
 
         { text = "", goto = "day14" }
     }

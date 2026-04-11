@@ -1,28 +1,28 @@
 return {
-    title = "Day 12 — Friday",
+    title = "Day 12 -- Friday",
     subtitle = "Demo Day",
     narration = "This is it. The final demo. Five hours to prepare. Leadership is waiting.",
 
-    bg = "office_evening",
-    bgm = "theme",
+    bg = "meeting_room",
+    bgm = "tension",
 
     dialogue = {
         { speaker = "ux", expression = "neutral", text = "Friday morning. Demo day. The real one this time." },
 
         -- Morning prep
-        { speaker = "pm", expression = "neutral", text = "Okay team. Demo at 2 PM. That gives us five hours to finalize." },
+        { speaker = "pm", expression = "stressed", text = "Okay team. Demo at 2 PM. That gives us five hours to finalize." },
         { speaker = "dev", expression = "neutral", text = "The build from last night is stable. Don't touch anything." },
-        { speaker = "qa", expression = "neutral", text = "I've prepared a list of things NOT to click during the demo. It's... extensive." },
+        { speaker = "qa", expression = "smirk", text = "I've prepared a list of things NOT to click during the demo. It's... extensive." },
         { speaker = "arch", expression = "neutral", text = "The performance fix is in. We can handle up to 10 concurrent users now." },
-        { speaker = "dev", expression = "neutral", text = "Ten whole users. The future of enterprise software." },
+        { speaker = "dev", expression = "smiling", text = "Ten whole users. The future of enterprise software." },
 
         -- Priya has one more thing
         { speaker = "po", expression = "neutral", text = "Team? I just want to say... I know I've been a lot." },
-        { speaker = "dev", expression = "neutral", text = "Priya—" },
+        { speaker = "dev", expression = "neutral", text = "Priya--" },
         { speaker = "po", expression = "neutral", text = "No, let me finish. I push hard because I believe in this product. But I should have listened more." },
-        { speaker = "qa", expression = "neutral", text = "(Is Priya... growing as a person?)" },
+        { speaker = "qa", expression = "smirk", text = "(Is Priya... growing as a person?)" },
         { speaker = "po", expression = "neutral", text = "After the demo, I want to do a proper retrospective. A real one." },
-        { speaker = "pm", expression = "neutral", text = "That's... actually very mature, Priya." },
+        { speaker = "pm", expression = "cheerful", text = "That's... actually very mature, Priya." },
 
         -- The demo prep choice
         { speaker = "pm", expression = "neutral", text = "Alex, you're leading the demo walkthrough. How do you want to present this?" },
@@ -40,8 +40,8 @@ return {
         { speaker = "qa", expression = "neutral", text = "I approve. The parts that work actually work well.", condition = "polished_subset" },
 
         -- Show everything
-        { speaker = "po", expression = "neutral", text = "Yes! Show them the vision! All of it!", condition = "showed_everything" },
-        { speaker = "qa", expression = "neutral", text = "Including the search that sorts by zodiac sign?", condition = "showed_everything" },
+        { speaker = "po", expression = "excited", text = "Yes! Show them the vision! All of it!", condition = "showed_everything" },
+        { speaker = "qa", expression = "smirk", text = "Including the search that sorts by zodiac sign?", condition = "showed_everything" },
         { speaker = "dev", expression = "neutral", text = "It's alphabetical in Korean. I told you.", condition = "showed_everything" },
 
         -- Honest demo
@@ -56,7 +56,7 @@ return {
         { speaker = "ux", expression = "neutral", text = "(The demo takes 20 minutes. The Q&A takes 40. It's always the Q&A.)" },
 
         -- End of day
-        { speaker = "pm", expression = "neutral", text = "We did it, team. The demo is done." },
+        { speaker = "pm", expression = "cheerful", text = "We did it, team. The demo is done." },
         { speaker = "dev", expression = "neutral", text = "How do we feel?" },
         { speaker = "ux", expression = "neutral", text = "Ask me on Monday." },
 

@@ -3,6 +3,9 @@
 *.exe
 *.app
 
+# Assets (not for distribution)
+assets/
+
 # OS files
 Thumbs.db
 .DS_Store

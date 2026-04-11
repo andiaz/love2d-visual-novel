@@ -15,6 +15,15 @@ local resumeScene = nil
 -- "Progress saved" notice timer (shown after returning from gameplay)
 local savedNoticeTimer = 0
 
+-- Title screen background
+local titleBG = nil
+
+-- Menu transition fade
+local menuFadeAlpha = 0
+local menuFadePhase = "none" -- "out" (darken to black), "in" (reveal menu)
+local menuFadeTimer = 0
+local menuFadeDuration = 0.4
+
 function love.load()
     love.window.setTitle("Sprint Zero")
 
@@ -30,6 +39,14 @@ function love.load()
 
     Scene:init()
     buildMenuOptions()
+
+    -- Load title screen background
+    if love.filesystem.getInfo("assets/bg/title_screen.png") then
+        titleBG = love.graphics.newImage("assets/bg/title_screen.png")
+    end
+
+    -- Start title screen music
+    Scene:crossfadeBGM("Sprint Screen Serenade")
 end
 
 function buildMenuOptions()
@@ -62,32 +79,65 @@ function continueGame()
 end
 
 function returnToMenu()
+    -- Start fade-out, then switch to menu when black
+    menuFadePhase = "out"
+    menuFadeTimer = 0
+    menuFadeAlpha = 0
+end
+
+function _completeReturnToMenu()
     gameMode = "menu"
-    savedNoticeTimer = 3.0 -- show "Progress saved" for 3 seconds
-    -- Stop BGM
-    if Scene.currentBGM then
-        Scene.currentBGM:stop()
-    end
-    Scene.currentBGMName = ""
+    savedNoticeTimer = 3.0
+    Scene:crossfadeBGM("Sprint Screen Serenade")
     Scene.current = nil
     Scene.backgroundName = ""
     buildMenuOptions()
+    -- Now fade back in to reveal menu
+    menuFadePhase = "in"
+    menuFadeTimer = 0
+    menuFadeAlpha = 1
 end
 
 function love.update(dt)
+    -- Always update BGM crossfade (for menu/resume music transitions)
+    Scene:updateBGMFade(dt)
+
+    -- Update menu transition fade
+    if menuFadePhase == "out" then
+        menuFadeTimer = menuFadeTimer + dt
+        menuFadeAlpha = math.min(menuFadeTimer / menuFadeDuration, 1)
+        if menuFadeAlpha >= 1 then
+            _completeReturnToMenu()
+        end
+    elseif menuFadePhase == "in" then
+        menuFadeTimer = menuFadeTimer + dt
+        menuFadeAlpha = math.max(1 - menuFadeTimer / menuFadeDuration, 0)
+        if menuFadeAlpha <= 0 then
+            menuFadePhase = "none"
+            menuFadeAlpha = 0
+        end
+    end
+
     if gameMode == "menu" and savedNoticeTimer > 0 then
         savedNoticeTimer = savedNoticeTimer - dt
     end
     if gameMode == "playing" then
         Scene:update(dt)
+        -- Check if scene wants to return to menu (ending finished)
+        if Scene.pendingMenu then
+            Scene.pendingMenu = false
+            State:deleteSave()
+            returnToMenu()
+        end
     end
 end
 
 function love.keypressed(key)
+    -- Block input during menu fade transition
+    if menuFadePhase ~= "none" then return end
+
     if gameMode == "menu" then
-        if key == "escape" then
-            love.event.quit()
-        elseif key == "up" then
+        if key == "up" then
             menuSelected = menuSelected - 1
             if menuSelected < 1 then menuSelected = #menuOptions end
         elseif key == "down" then
@@ -121,6 +171,7 @@ end
 
 function love.mousepressed(x, y, button)
     if button ~= 1 then return end
+    if menuFadePhase ~= "none" then return end
 
     if gameMode == "resume" then
         gameMode = "playing"
@@ -129,13 +180,7 @@ function love.mousepressed(x, y, button)
     end
 
     if gameMode == "menu" then
-        local screenWidth, screenHeight = love.graphics.getDimensions()
-        local optionHeight = 44
-        local optionPadding = 8
-        local totalHeight = #menuOptions * (optionHeight + optionPadding) - optionPadding
-        local startY = screenHeight / 2 + 30
-        local optionWidth = 240
-        local startX = (screenWidth - optionWidth) / 2
+        local startX, startY, optionWidth, optionHeight, optionPadding = getMenuLayout()
 
         for i, _ in ipairs(menuOptions) do
             local cy = startY + (i - 1) * (optionHeight + optionPadding)
@@ -152,12 +197,7 @@ end
 
 function love.mousemoved(x, y)
     if gameMode == "menu" then
-        local screenWidth, screenHeight = love.graphics.getDimensions()
-        local optionHeight = 44
-        local optionPadding = 8
-        local startY = screenHeight / 2 + 30
-        local optionWidth = 240
-        local startX = (screenWidth - optionWidth) / 2
+        local startX, startY, optionWidth, optionHeight, optionPadding = getMenuLayout()
 
         menuHovered = 0
         for i, _ in ipairs(menuOptions) do
@@ -171,6 +211,20 @@ function love.mousemoved(x, y)
     end
 
     Scene:mousemoved(x, y)
+end
+
+function getMenuLayout()
+    local screenWidth, screenHeight = love.graphics.getDimensions()
+    local panelY = screenHeight * 0.15
+    local titleY = panelY + 14
+    local subY = titleY + 52
+    local lineY = subY + 36
+    local optionHeight = 44
+    local optionPadding = 10
+    local optionWidth = 240
+    local startY = lineY + 28
+    local startX = (screenWidth - optionWidth) / 2
+    return startX, startY, optionWidth, optionHeight, optionPadding
 end
 
 function selectMenuOption(action)
@@ -188,6 +242,11 @@ function love.draw()
 
     if gameMode == "menu" then
         drawMenu(screenWidth, screenHeight)
+        -- Menu transition fade overlay
+        if menuFadeAlpha > 0 then
+            love.graphics.setColor(0, 0, 0, menuFadeAlpha)
+            love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+        end
         return
     end
 
@@ -218,19 +277,34 @@ function love.draw()
         return
     end
 
-    -- Draw portrait
-    local portraitName = Scene:getPortraitName(line)
-    local portrait = Scene:getPortrait(portraitName)
-    if portrait then
-        love.graphics.setColor(0.8, 0.8, 0.8, 1)
-        love.graphics.rectangle("fill", 45, 115, portrait:getWidth() * Scene.charScale + 10, portrait:getHeight() * Scene.charScale + 10)
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(portrait, 50, 120, 0, Scene.charScale, Scene.charScale)
-    end
-
     -- Textbox
     local textboxHeight = 150
     local textboxY = screenHeight - textboxHeight
+
+    -- Draw portrait (scaled to fit available space, bottom-aligned above textbox)
+    local portraitName = Scene:getPortraitName(line)
+    local portrait = Scene:getPortrait(portraitName)
+    if portrait then
+        local targetHeight = textboxY - 20
+        local pScale = targetHeight / portrait:getHeight()
+        local pWidth = portrait:getWidth() * pScale
+        local pHeight = targetHeight
+        local pX = 20
+        local pY = textboxY - pHeight - 5
+        local pad = 4
+        -- Drop shadow
+        love.graphics.setColor(0, 0, 0, 0.3)
+        love.graphics.rectangle("fill", pX - pad + 3, pY - pad + 3, pWidth + pad * 2, pHeight + pad * 2, 6, 6)
+        -- Dark border frame
+        love.graphics.setColor(0.12, 0.12, 0.16, 0.85)
+        love.graphics.rectangle("fill", pX - pad, pY - pad, pWidth + pad * 2, pHeight + pad * 2, 6, 6)
+        -- Portrait
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(portrait, pX, pY, 0, pScale, pScale)
+        -- Thin border line
+        love.graphics.setColor(0.4, 0.4, 0.5, 0.5)
+        love.graphics.rectangle("line", pX - pad, pY - pad, pWidth + pad * 2, pHeight + pad * 2, 6, 6)
+    end
 
     -- Textbox background with gradient feel
     love.graphics.setColor(0, 0, 0, 0.8)
@@ -276,105 +350,152 @@ function love.draw()
 
     -- Fade overlay (drawn last, on top of everything)
     drawFadeOverlay(screenWidth, screenHeight)
+
+    -- Menu transition fade overlay (on top of scene fade)
+    if menuFadeAlpha > 0 then
+        love.graphics.setColor(0, 0, 0, menuFadeAlpha)
+        love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+    end
 end
 
 function drawMenu(screenWidth, screenHeight)
-    -- Dark background
-    love.graphics.setColor(0.05, 0.05, 0.1, 1)
-    love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
+    -- Background image or fallback solid color
+    if titleBG then
+        local bgScaleX = screenWidth / titleBG:getWidth()
+        local bgScaleY = screenHeight / titleBG:getHeight()
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(titleBG, 0, 0, 0, bgScaleX, bgScaleY)
 
-    -- Subtle pattern lines
-    love.graphics.setColor(0.1, 0.1, 0.18, 1)
-    for i = 0, screenHeight, 30 do
-        love.graphics.rectangle("fill", 0, i, screenWidth, 1)
+        -- Gradient overlay: light at top, dark at bottom
+        local gradientSteps = 32
+        local stepHeight = screenHeight / gradientSteps
+        for i = 0, gradientSteps - 1 do
+            local t = i / (gradientSteps - 1) -- 0 at top, 1 at bottom
+            local alpha = 0.15 + t * 0.7       -- 0.15 -> 0.85
+            love.graphics.setColor(0.02, 0.02, 0.08, alpha)
+            love.graphics.rectangle("fill", 0, i * stepHeight, screenWidth, stepHeight + 1)
+        end
+    else
+        love.graphics.setColor(0.05, 0.05, 0.1, 1)
+        love.graphics.rectangle("fill", 0, 0, screenWidth, screenHeight)
     end
 
-    -- Game title
+    -- Title backdrop panel (dark rounded box behind title area)
+    local panelWidth = 520
+    local panelX = (screenWidth - panelWidth) / 2
+    local panelY = screenHeight * 0.15
+    local panelHeight = 115
+    love.graphics.setColor(0, 0, 0, 0.55)
+    love.graphics.rectangle("fill", panelX, panelY, panelWidth, panelHeight, 12, 12)
+
+    -- Game title (with drop shadow) — cobalt/gold scheme
     love.graphics.setFont(fonts.titleLarge)
-    love.graphics.setColor(0.4, 0.7, 1.0, 1)
     local title = "Sprint Zero"
     local titleWidth = fonts.titleLarge:getWidth(title)
-    love.graphics.print(title, (screenWidth - titleWidth) / 2, screenHeight / 2 - 120)
+    local titleX = (screenWidth - titleWidth) / 2
+    local titleY = panelY + 14
+    -- Shadow
+    love.graphics.setColor(0, 0, 0, 0.7)
+    love.graphics.print(title, titleX + 2, titleY + 2)
+    -- Main text — gold (#DEB841)
+    love.graphics.setColor(0.87, 0.72, 0.25, 1)
+    love.graphics.print(title, titleX, titleY)
 
-    -- Subtitle
+    -- Subtitle (with drop shadow)
     love.graphics.setFont(fonts.titleSub)
-    love.graphics.setColor(0.6, 0.65, 0.75, 1)
     local sub = "A Visual Novel About Shipping Software"
     local subWidth = fonts.titleSub:getWidth(sub)
-    love.graphics.print(sub, (screenWidth - subWidth) / 2, screenHeight / 2 - 70)
+    local subX = (screenWidth - subWidth) / 2
+    local subY = titleY + 52
+    love.graphics.setColor(0, 0, 0, 0.6)
+    love.graphics.print(sub, subX + 1, subY + 1)
+    -- White (#FBFFFE)
+    love.graphics.setColor(0.98, 1.0, 1.0, 0.9)
+    love.graphics.print(sub, subX, subY)
 
-    -- Accent line
-    local lineWidth = 200
-    love.graphics.setColor(0.4, 0.6, 0.9, 0.4)
-    love.graphics.rectangle("fill", (screenWidth - lineWidth) / 2, screenHeight / 2 - 40, lineWidth, 2)
-
-    -- Controls info (between accent line and menu options)
-    love.graphics.setFont(fonts.menuSmall)
-    love.graphics.setColor(0.5, 0.55, 0.65, 0.7)
-    local controls = "SPACE / Click = Advance    Up/Down = Choose    ESC = Menu"
-    local controlsWidth = fonts.menuSmall:getWidth(controls)
-    love.graphics.print(controls, (screenWidth - controlsWidth) / 2, screenHeight / 2 - 18)
+    -- Accent line — gold
+    local lineWidth = 220
+    local lineY = subY + 36
+    love.graphics.setColor(0.87, 0.72, 0.25, 0.15)
+    love.graphics.rectangle("fill", (screenWidth - lineWidth - 8) / 2, lineY - 2, lineWidth + 8, 6, 3, 3)
+    love.graphics.setColor(0.87, 0.72, 0.25, 0.6)
+    love.graphics.rectangle("fill", (screenWidth - lineWidth) / 2, lineY, lineWidth, 2)
 
     -- Menu options
-    local optionHeight = 44
-    local optionPadding = 8
-    local optionWidth = 240
-    local startY = screenHeight / 2 + 30
-    local startX = (screenWidth - optionWidth) / 2
+    local startX, startY, optionWidth, optionHeight, optionPadding = getMenuLayout()
 
     love.graphics.setFont(fonts.menu)
+
+    -- Subtle pulse for selected button (slow breathing glow)
+    local pulse = 0.08 * math.sin(love.timer.getTime() * 2.5)
 
     for i, option in ipairs(menuOptions) do
         local cy = startY + (i - 1) * (optionHeight + optionPadding)
         local isSelected = (i == menuSelected)
         local isHovered = (i == menuHovered)
+        local isActive = isSelected or isHovered
 
-        -- Background
-        if isSelected or isHovered then
-            love.graphics.setColor(0.25, 0.4, 0.7, 0.8)
+        -- Button shadow
+        love.graphics.setColor(0, 0, 0, 0.35)
+        love.graphics.rectangle("fill", startX + 2, cy + 2, optionWidth, optionHeight, 8, 8)
+
+        -- Button background — cobalt blue (#0047AB) when active, with pulse
+        if isActive then
+            love.graphics.setColor(0.0 + pulse, 0.28 + pulse, 0.67 + pulse, 0.95)
         else
-            love.graphics.setColor(0.12, 0.12, 0.18, 0.8)
+            love.graphics.setColor(0.04, 0.04, 0.1, 0.88)
         end
-        love.graphics.rectangle("fill", startX, cy, optionWidth, optionHeight, 6, 6)
+        love.graphics.rectangle("fill", startX, cy, optionWidth, optionHeight, 8, 8)
 
-        -- Border
-        if isSelected or isHovered then
-            love.graphics.setColor(0.5, 0.7, 1.0, 1)
+        -- Button border — gold when active, with pulse on alpha
+        if isActive then
+            love.graphics.setColor(0.87, 0.72, 0.25, 0.7 + pulse * 3)
         else
-            love.graphics.setColor(0.3, 0.3, 0.4, 0.5)
+            love.graphics.setColor(0.4, 0.38, 0.32, 0.4)
         end
-        love.graphics.rectangle("line", startX, cy, optionWidth, optionHeight, 6, 6)
+        love.graphics.rectangle("line", startX, cy, optionWidth, optionHeight, 8, 8)
 
-        -- Text
-        love.graphics.setColor(1, 1, 1)
+        -- Button text — white (#FBFFFE)
         local label = option.label
         local labelWidth = fonts.menu:getWidth(label)
-        love.graphics.print(label, startX + (optionWidth - labelWidth) / 2, cy + 11)
+        local labelX = startX + (optionWidth - labelWidth) / 2
+        local labelY = cy + 11
+        love.graphics.setColor(0, 0, 0, 0.5)
+        love.graphics.print(label, labelX + 1, labelY + 1)
+        love.graphics.setColor(0.98, 1.0, 1.0, 1)
+        love.graphics.print(label, labelX, labelY)
     end
 
     -- "Progress saved" notice below menu options (fades out over 3 seconds)
     if savedNoticeTimer > 0 then
-        local noticeAlpha = math.min(savedNoticeTimer / 1.0, 1) -- fade out in last second
+        local noticeAlpha = math.min(savedNoticeTimer / 1.0, 1)
         local noticeY = startY + #menuOptions * (optionHeight + optionPadding) + 8
         love.graphics.setFont(fonts.prompt)
-        love.graphics.setColor(0.4, 0.8, 0.4, 0.9 * noticeAlpha)
+        love.graphics.setColor(0.4, 0.85, 0.4, 0.9 * noticeAlpha)
         local notice = "Progress saved"
         local noticeWidth = fonts.prompt:getWidth(notice)
         love.graphics.print(notice, (screenWidth - noticeWidth) / 2, noticeY)
     end
 
-    -- Bottom bar
+    -- Bottom bar (dark strip for readability)
+    love.graphics.setColor(0, 0, 0, 0.4)
+    love.graphics.rectangle("fill", 0, screenHeight - 36, screenWidth, 36)
+
     love.graphics.setFont(fonts.menuSmall)
 
     -- Auto-save notice (left)
-    love.graphics.setColor(0.4, 0.55, 0.4, 0.6)
-    love.graphics.print("Game saves automatically", 16, screenHeight - 28)
+    love.graphics.setColor(0, 0, 0, 0.6)
+    love.graphics.print("Game saves automatically", 17, screenHeight - 25)
+    love.graphics.setColor(0.78, 0.78, 0.72, 0.7)
+    love.graphics.print("Game saves automatically", 16, screenHeight - 26)
 
     -- Navigation hint (right)
-    love.graphics.setColor(0.4, 0.4, 0.5, 0.5)
     local navHint = "Arrow keys or mouse to navigate"
     local navWidth = fonts.menuSmall:getWidth(navHint)
-    love.graphics.print(navHint, screenWidth - navWidth - 16, screenHeight - 28)
+    love.graphics.setColor(0, 0, 0, 0.6)
+    love.graphics.print(navHint, screenWidth - navWidth - 15, screenHeight - 25)
+    love.graphics.setColor(0.78, 0.78, 0.72, 0.7)
+    love.graphics.print(navHint, screenWidth - navWidth - 16, screenHeight - 26)
 end
 
 function drawResumeCard(screenWidth, screenHeight)
@@ -505,26 +626,32 @@ function drawChoices(choices, screenWidth, textboxY)
         local isSelected = (i == Scene.selectedChoice)
         local isHovered = (i == Scene.hoveredChoice)
 
-        -- Background
+        -- Background — cobalt blue (#0047AB) when selected, dark when not
         if isSelected or isHovered then
-            love.graphics.setColor(0.3, 0.5, 0.8, 0.9 * alpha)
+            love.graphics.setColor(0.0, 0.28, 0.67, 0.92 * alpha)
         else
-            love.graphics.setColor(0.1, 0.1, 0.1, 0.85 * alpha)
+            love.graphics.setColor(0.04, 0.04, 0.1, 0.88 * alpha)
         end
         love.graphics.rectangle("fill", startX, cy, choiceBoxWidth, choiceHeight, 6, 6)
 
-        -- Border
+        -- Border — gold (#DEB841) when selected, subtle when not
         if isSelected or isHovered then
-            love.graphics.setColor(0.5, 0.7, 1.0, 1 * alpha)
+            love.graphics.setColor(0.87, 0.72, 0.25, 0.9 * alpha)
         else
-            love.graphics.setColor(0.4, 0.4, 0.4, 0.6 * alpha)
+            love.graphics.setColor(0.4, 0.38, 0.32, 0.4 * alpha)
         end
         love.graphics.rectangle("line", startX, cy, choiceBoxWidth, choiceHeight, 6, 6)
 
-        -- Text
-        love.graphics.setColor(1, 1, 1, alpha)
-        local prefix = (isSelected or isHovered) and "> " or "  "
-        love.graphics.print(prefix .. choice.text, startX + 14, cy + 11)
+        -- Text — white (#FBFFFE), gold prefix when selected
+        if isSelected or isHovered then
+            love.graphics.setColor(0.87, 0.72, 0.25, alpha)
+            love.graphics.print("> ", startX + 14, cy + 11)
+            love.graphics.setColor(0.98, 1.0, 1.0, alpha)
+            love.graphics.print("  " .. choice.text, startX + 14, cy + 11)
+        else
+            love.graphics.setColor(0.82, 0.82, 0.82, alpha)
+            love.graphics.print("  " .. choice.text, startX + 14, cy + 11)
+        end
     end
 end
 

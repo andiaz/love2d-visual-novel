@@ -1,19 +1,19 @@
 return {
-    bg = "office_evening",
-    bgm = "theme",
+    title = "The Burnout",
+    subtitle = "Ending",
+    narration = "The product shipped. You didn't.",
+    bg = "ending_burnout",
+    bgm = "late_night",
 
     dialogue = {
-        { speaker = "ux", expression = "neutral", text = "ENDING: THE BURNOUT" },
-        { text = "..." },
-        { speaker = "ux", expression = "neutral", text = "The product shipped." },
         { speaker = "ux", expression = "neutral", text = "It has every feature Priya wanted. Every architectural pattern Casey designed. Every shortcut Jordan scheduled." },
-        { speaker = "ux", expression = "neutral", text = "It does everything. It does nothing well." },
+        { speaker = "ux", expression = "frustrated", text = "It does everything. It does nothing well." },
         { text = "..." },
         { speaker = "ux", expression = "neutral", text = "I open the Jira board. Every ticket is green. Completed. Done. Shipped." },
-        { speaker = "ux", expression = "neutral", text = "I feel nothing." },
+        { speaker = "ux", expression = "frustrated", text = "I feel nothing." },
         { text = "..." },
         { speaker = "ux", expression = "neutral", text = "I said yes to everything. Every scope change. Every impossible deadline. Every 'can we just.'" },
-        { speaker = "ux", expression = "neutral", text = "I thought being agreeable was being a good teammate. Turns out it's just being a doormat." },
+        { speaker = "ux", expression = "frustrated", text = "I thought being agreeable was being a good teammate. Turns out it's just being a doormat." },
         { text = "..." },
         { speaker = "ux", expression = "neutral", text = "Sam left for a startup last week. Riley transferred to another team. Casey is 'consulting.'" },
         { speaker = "ux", expression = "neutral", text = "Priya is already planning Project Chimera 2.0. She has 63 slides this time." },
@@ -23,8 +23,8 @@ return {
         { speaker = "ux", expression = "neutral", text = "'Open to Work.'" },
         { text = "..." },
         { speaker = "ux", expression = "neutral", text = "I delivered exactly what was asked for." },
-        { speaker = "ux", expression = "neutral", text = "That was the problem." },
+        { speaker = "ux", expression = "frustrated", text = "That was the problem." },
         { text = "..." },
-        { text = "THE END" },
+        { text = "", goto = "$menu" },
     }
 }

@@ -1,10 +1,11 @@
 return {
-    bg = "office_day",
-    bgm = "theme",
+    title = "The Ship",
+    subtitle = "Ending",
+    narration = "Not perfect. But ours.",
+    bg = "ending_ship",
+    bgm = "Sprint Cycle (UX Nights)",
 
     dialogue = {
-        { speaker = "ux", expression = "neutral", text = "ENDING: THE SHIP" },
-        { text = "..." },
         { speaker = "ux", expression = "neutral", text = "We shipped." },
         { speaker = "ux", expression = "neutral", text = "Not everything Priya wanted. Not as architecturally pure as Casey dreamed. Not as polished as I hoped." },
         { speaker = "ux", expression = "neutral", text = "But it works. Users are using it. Some of them even like it." },
@@ -16,8 +17,8 @@ return {
         { speaker = "dev", expression = "smiling", text = "Next sprint?" },
         { speaker = "ux", expression = "neutral", text = "Next sprint." },
         { text = "..." },
-        { speaker = "pm", expression = "neutral", text = "Quick standup, everyone! 15 minutes!" },
-        { speaker = "qa", expression = "neutral", text = "Here we go again." },
+        { speaker = "pm", expression = "cheerful", text = "Quick standup, everyone! 15 minutes!" },
+        { speaker = "qa", expression = "smirk", text = "Here we go again." },
         { speaker = "ux", expression = "neutral", text = "But this time, something's different. The standup is 12 minutes." },
         { speaker = "ux", expression = "neutral", text = "Jordan actually looks surprised." },
         { text = "..." },
@@ -28,6 +29,6 @@ return {
         { speaker = "ux", expression = "neutral", text = "It's not perfect." },
         { speaker = "ux", expression = "neutral", text = "But it's ours." },
         { text = "..." },
-        { text = "THE END" },
+        { text = "", goto = "$menu" },
     }
 }

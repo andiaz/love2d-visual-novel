@@ -26,6 +26,14 @@ local Scene = {
     currentBGMName = "",
     bgmSources = {},
     sfx = {},
+    bgmMaxVolume = 0.4,
+
+    -- BGM crossfade
+    bgmFadePhase = "none", -- "out", "in", "none"
+    bgmFadeTimer = 0,
+    bgmFadeOutDuration = 1.0,
+    bgmFadeInDuration = 1.0,
+    pendingBGMName = nil,
 
     -- Choice state
     selectedChoice = 1,
@@ -46,6 +54,7 @@ local Scene = {
     fadeTimer = 0,
     fadeDuration = 0.4,
     pendingScene = nil,
+    pendingMenu = false,
 }
 
 function Scene:init()
@@ -65,6 +74,68 @@ function Scene:init()
     self.sfx.blip = love.audio.newSource(soundData)
     self.sfx.blip:setVolume(0.25)
     self.blipCounter = 0
+end
+
+function Scene:crossfadeBGM(name)
+    if name == self.currentBGMName then return end
+
+    self.pendingBGMName = name
+
+    if self.currentBGM and self.currentBGM:isPlaying() then
+        -- Fade out current track first
+        self.bgmFadePhase = "out"
+        self.bgmFadeTimer = 0
+    else
+        -- Nothing playing, just start the new track with fade-in
+        self:_startBGM(name)
+    end
+end
+
+function Scene:_startBGM(name)
+    if self.currentBGM then
+        self.currentBGM:stop()
+    end
+
+    self.currentBGMName = name
+
+    if not self.bgmSources[name] then
+        self.bgmSources[name] = love.audio.newSource("assets/bgm/" .. name .. ".ogg", "stream")
+        self.bgmSources[name]:setLooping(true)
+    end
+
+    self.currentBGM = self.bgmSources[name]
+    self.currentBGM:setVolume(0)
+    self.currentBGM:play()
+    self.bgmFadePhase = "in"
+    self.bgmFadeTimer = 0
+    self.pendingBGMName = nil
+end
+
+function Scene:updateBGMFade(dt)
+    if self.bgmFadePhase == "out" then
+        self.bgmFadeTimer = self.bgmFadeTimer + dt
+        local progress = math.min(self.bgmFadeTimer / self.bgmFadeOutDuration, 1)
+        if self.currentBGM then
+            self.currentBGM:setVolume(self.bgmMaxVolume * (1 - progress))
+        end
+        if progress >= 1 then
+            -- Fade-out complete, start new track
+            if self.pendingBGMName then
+                self:_startBGM(self.pendingBGMName)
+            else
+                self.bgmFadePhase = "none"
+            end
+        end
+    elseif self.bgmFadePhase == "in" then
+        self.bgmFadeTimer = self.bgmFadeTimer + dt
+        local progress = math.min(self.bgmFadeTimer / self.bgmFadeInDuration, 1)
+        if self.currentBGM then
+            self.currentBGM:setVolume(self.bgmMaxVolume * progress)
+        end
+        if progress >= 1 then
+            self.bgmFadePhase = "none"
+        end
+    end
 end
 
 function Scene:loadScene(name)
@@ -98,22 +169,9 @@ function Scene:loadScene(name)
         self:setLine(self.current.dialogue[self.currentLine])
     end
 
-    -- Handle background music
-    if self.current.bgm and self.current.bgm ~= self.currentBGMName then
-        self.currentBGMName = self.current.bgm
-
-        if self.currentBGM then
-            self.currentBGM:stop()
-        end
-
-        if not self.bgmSources[self.currentBGMName] then
-            self.bgmSources[self.currentBGMName] = love.audio.newSource("assets/bgm/" .. self.currentBGMName .. ".ogg", "stream")
-            self.bgmSources[self.currentBGMName]:setLooping(true)
-            self.bgmSources[self.currentBGMName]:setVolume(0.4)
-        end
-
-        self.currentBGM = self.bgmSources[self.currentBGMName]
-        self.currentBGM:play()
+    -- Handle background music (crossfade)
+    if self.current.bgm then
+        self:crossfadeBGM(self.current.bgm)
     end
 
     -- Set background early so it shows behind title card
@@ -136,18 +194,8 @@ function Scene:_doLoadScene(name)
     self.hoveredChoice = 0
     self.showingChoices = false
 
-    if self.current.bgm and self.current.bgm ~= self.currentBGMName then
-        self.currentBGMName = self.current.bgm
-        if self.currentBGM then
-            self.currentBGM:stop()
-        end
-        if not self.bgmSources[self.currentBGMName] then
-            self.bgmSources[self.currentBGMName] = love.audio.newSource("assets/bgm/" .. self.currentBGMName .. ".ogg", "stream")
-            self.bgmSources[self.currentBGMName]:setLooping(true)
-            self.bgmSources[self.currentBGMName]:setVolume(0.4)
-        end
-        self.currentBGM = self.bgmSources[self.currentBGMName]
-        self.currentBGM:play()
+    if self.current.bgm then
+        self:crossfadeBGM(self.current.bgm)
     end
 
     if self.current.bg then
@@ -193,17 +241,9 @@ function Scene:loadFromSave()
     self.showingTitleCard = false
     self.titleCardPhase = "none"
 
-    -- Load BGM
-    if self.current.bgm and self.current.bgm ~= self.currentBGMName then
-        self.currentBGMName = self.current.bgm
-        if self.currentBGM then self.currentBGM:stop() end
-        if not self.bgmSources[self.currentBGMName] then
-            self.bgmSources[self.currentBGMName] = love.audio.newSource("assets/bgm/" .. self.currentBGMName .. ".ogg", "stream")
-            self.bgmSources[self.currentBGMName]:setLooping(true)
-            self.bgmSources[self.currentBGMName]:setVolume(0.4)
-        end
-        self.currentBGM = self.bgmSources[self.currentBGMName]
-        self.currentBGM:play()
+    -- Load BGM (crossfade)
+    if self.current.bgm then
+        self:crossfadeBGM(self.current.bgm)
     end
 
     -- Load background
@@ -236,6 +276,8 @@ function Scene:setLine(line)
         if State:check(line.condition) then
             if line.goto == "$ending" then
                 self:loadScene(State:calculateEnding())
+            elseif line.goto == "$menu" then
+                self.pendingMenu = true
             else
                 self:loadScene(line.goto)
             end
@@ -323,6 +365,8 @@ function Scene:advanceLine()
     if lastLine.goto and State:check(lastLine.condition) then
         if lastLine.goto == "$ending" then
             self:loadScene(State:calculateEnding())
+        elseif lastLine.goto == "$menu" then
+            self.pendingMenu = true
         else
             self:loadScene(lastLine.goto)
         end
@@ -491,8 +535,6 @@ function Scene:keypressed(key)
         end
     else
         if key == "space" then
-            if self.sfx.click then self.sfx.click:play() end
-
             if self.typing then
                 self.visibleText = line.text
                 self.typing = false
