@@ -131,7 +131,7 @@ Use same style prefix but: `anime background art, no characters, wide shot, 800x
 
 ## Per-Character Storylines (Writing Backlog)
 
-For each of the 5 new playable characters, the same 15-day arc + 4 endings need to be written from that role's perspective. The UX route already exists and will be moved into `scenes/ux/`. Each role's perspective should make the player *feel* what that IT job is like — purely experiential, no explainers.
+For each of the 5 new playable characters, the same 15-day arc + 4 endings need to be written from that role's perspective. The UX route already exists and will be moved into `scenes/ux/`. Each role's perspective should make the player _feel_ what that IT job is like — purely experiential, no explainers.
 
 ### Sam (Dev) route — `scenes/dev/`
 
@@ -243,21 +243,13 @@ For each of the 5 new playable characters, the same 15-day arc + 4 endings need 
 - [x] Ending: The Pivot (Architect variant)
 - [x] Ending: The Burnout (Architect variant)
 
-### Optional polish (future)
-
-- [ ] Per-character intro card on selection (animated transition into day 1)
-- [ ] Character-specific BGM theme on the select screen
-- [ ] Per-character ending formulas in `State:calculateEnding()` if roles diverge enough
-- [ ] New portrait expressions as writing demands them
-- [ ] Update `story.md` story bible with the per-character perspective notes
-- [ ] Update README with the character-select feature
-
 ## Polish
 
 - [x] Animate choice boxes appearing (slide in + fade, staggered per choice)
 - [x] Add text sound effect (procedural blip every 2 characters during typewriter)
-- [ ] Test all story branches end-to-end
-- [ ] Update README with final feature list
+- [x] Test all story branches end-to-end (validate.py)
+- [x] Update README with final feature list
+- [x] Update story.md with multi-character premise
 
 ## Done
 

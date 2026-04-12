@@ -2,11 +2,11 @@
 
 ## Premise
 
-You are **Alex**, a UX Designer joining a new product team at a mid-sized tech company. The team has been assembled to build **Project Chimera** — a "knowledge-sharing platform" that the Product Owner describes as "Confluence meets TikTok meets LinkedIn." Nobody is sure what that means, including the Product Owner.
+You choose one of **six IT roles** — UX Designer, Developer, Project Manager, Product Owner, QA Engineer, or Architect — and join a new product team at a mid-sized tech company. The team has been assembled to build **Project Chimera** — a "knowledge-sharing platform" that the Product Owner describes as "Confluence meets TikTok meets LinkedIn." Nobody is sure what that means, including the Product Owner.
 
-Over the course of 2-3 sprints (10-15 in-game days), you navigate conflicting priorities, impossible deadlines, scope creep, and office politics — trying to ship something users actually want without losing your mind.
+Over the course of 2 sprints (15 in-game days), you navigate conflicting priorities, impossible deadlines, scope creep, and office politics — all from the perspective of your chosen role. The same events feel different depending on who you are: the dev sees API costs where the designer sees interaction polish; the PM sees risk registers where the PO sees vision.
 
-Your choices shape relationships with teammates, the direction of the product, and ultimately whether the project succeeds, pivots, or burns everyone out.
+Your choices shape relationships with teammates, the direction of the product, and ultimately whether the project succeeds, pivots, or burns everyone out. Each role has a complete 15-day storyline with unique inner monologue, choices, and the same 4 endings told from that role's perspective.
 
 ---
 
