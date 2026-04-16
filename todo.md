@@ -1,278 +1,323 @@
-# Sprint Zero — To-Do List
+# Sprint Zero -- To-Do List
 
-## Engine
+## Phase 0: Quality Fixes
 
-- [x] Add save/load system (serialize State flags + relationships + current scene/line to file)
-- [x] Add title screen / main menu (New Game, Continue, Quit)
-- [x] Add scene transition effects (fade to black between days)
-- [x] Add per-line background switching (currently only set at scene level)
-- [ ] Add support for multiple characters on screen at once
-- [x] Add ending calculation logic (evaluate flags + relationship scores to pick ending)
+### Flag Audit
+- [ ] Audit all flag names across all 114 scene files for consistency
+- [ ] Fix `wants_research` vs `pushed_interviews` naming mismatch (Days 1-3)
+- [ ] Ensure every flag set in a choice is referenced in at least 2-3 later days
+- [ ] Remove or consolidate orphaned flags (`eager_for_vision`, `asked_what` etc.)
+- [ ] Add new second-choice flags (Day 3 emotional, Day 5 emotional, etc.)
+- [ ] Add rapport milestone flags (`dev_ally`, `qa_ally`, etc.)
 
-## Art & Assets
+### Gag Reduction
+- [ ] Reduce "47-slide deck" to max 3 uses: Day 1 (setup), Day 3 (callback), 1 ending (payoff). Remove all other instances.
+- [ ] Reduce "15-minute standup" to 3 uses: Day 2 (38 min), Day 5 (42 min), Day 14 (12 min payoff). Remove all other instances.
+- [ ] Vary Casey's `whiteboarding` expression -- use it for ~30% of appearances, replace rest with `concerned`, `neutral`, `thinking`
+- [ ] Reduce "delight" gag to 1 use in Day 2, 1 callback max
+- [ ] Ensure "can we just" escalates in absurdity each use (max 3 uses)
 
-### Character Portrait Prompts
+### Copy-Paste Elimination
+- [ ] Rewrite Riley's Day 11 "47 bugs" speech uniquely for each route's POV
+- [ ] Rewrite Sam's intro line uniquely per route (currently identical in 5 routes)
+- [ ] Rewrite Priya's Day 5 scope pitch uniquely per route
+- [ ] Rewrite Day 10 crunch monologue uniquely per route
+- [ ] Rewrite Day 12 demo framing uniquely per route
+- [ ] Review and differentiate all Day 1 kickoff intros across routes
 
-Use these prompts for consistent anime-style visual novel portraits. Append the expression to each base prompt.
-Save as PNG, transparent background, roughly 800x1200px. Filename format: `{id}_{expression}.png`
+### Narrative Contradictions
+- [ ] Establish canonical architecture timeline (proposed Day 2, partially adopted Day 4, load-bearing Day 10)
+- [ ] Fix demo scope: conditional outcomes based on earlier technical choices (not convergent)
+- [ ] Make Priya's self-awareness consistent: she knows the deck is too long but can't stop herself
 
-**Style prefix (use for ALL characters):**
+### Character Voice Differentiation
+- [ ] Sam: different critique style when talking to UX vs Arch vs PM vs PO
+- [ ] Priya: different pitch style based on audience
+- [ ] Casey: different explanation style based on audience
+- [ ] Riley: different bug reporting tone based on audience
+- [ ] Jordan: different mediation approach based on who's in conflict
+
+---
+
+## Phase 1: Engine Enhancements
+
+- [ ] Per-line BGM switching in `engine/scene.lua` (check for `line.bgm` in `setLine()`)
+- [ ] Relationship-threshold conditions in `engine/state.lua` (`condition = {rel_dev_gte = 5}`)
+- [ ] Test both features with a sample scene
+
+---
+
+## Phase 2: Story Expansion -- Day 15 (All Characters)
+
+Currently 3 lines. Target: 30-35 lines (~500 words).
+
+- [ ] UX (Alex) -- Day 15 expansion
+- [ ] Dev (Sam) -- Day 15 expansion
+- [ ] PM (Jordan) -- Day 15 expansion
+- [ ] PO (Priya) -- Day 15 expansion
+- [ ] QA (Riley) -- Day 15 expansion
+- [ ] Arch (Casey) -- Day 15 expansion
+
+---
+
+## Phase 3: Story Expansion -- Days 13-14 (All Characters)
+
+### Day 13 -- The Retro (Target: ~1,000 words, 2 choices)
+- [ ] UX Day 13 expansion (morning email, expanded retro, 1-on-1, second choice)
+- [ ] Dev Day 13 expansion
+- [ ] PM Day 13 expansion
+- [ ] PO Day 13 expansion
+- [ ] QA Day 13 expansion
+- [ ] Arch Day 13 expansion
+
+### Day 14 -- The Last Day (Target: ~800 words, binary choice)
+- [ ] UX Day 14 expansion (morning packing, conditional goodbyes, 1-on-1 farewell)
+- [ ] Dev Day 14 expansion
+- [ ] PM Day 14 expansion
+- [ ] PO Day 14 expansion
+- [ ] QA Day 14 expansion
+- [ ] Arch Day 14 expansion
+
+---
+
+## Phase 4: Story Expansion -- Days 1-4 (All Characters)
+
+### Day 1 -- Kickoff (Target: ~1,000 words)
+- [ ] UX Day 1 expansion (pre-meeting, post-meeting decompression)
+- [ ] Dev Day 1 expansion
+- [ ] PM Day 1 expansion + unique: reviewing project brief before meeting
+- [ ] PO Day 1 expansion + unique: rehearsing deck, nervous energy
+- [ ] QA Day 1 expansion
+- [ ] Arch Day 1 expansion + unique: sketching system diagram
+
+### Day 2 -- First Standup (Target: ~1,000 words)
+- [ ] UX Day 2 expansion (morning routine, post-standup convo)
+- [ ] Dev Day 2 expansion + unique: debugging dev environment
+- [ ] PM Day 2 expansion + unique: Calendar Tetris scene
+- [ ] PO Day 2 expansion
+- [ ] QA Day 2 expansion + unique: writing first test plan
+- [ ] Arch Day 2 expansion + unique: legacy system discovery
+
+### Day 3 -- The Demo Bomb (Target: ~1,200 words, crisis template)
+- [ ] UX Day 3 expansion (binary choice, second choice, hallway venting)
+- [ ] Dev Day 3 expansion + unique: feasibility evaluation
+- [ ] PM Day 3 expansion + unique: executive ambush scene
+- [ ] PO Day 3 expansion + unique: stakeholder call
+- [ ] QA Day 3 expansion
+- [ ] Arch Day 3 expansion
+
+### Day 4 -- The Design Review (Target: ~1,100 words)
+- [ ] UX Day 4 expansion + unique: imposter syndrome moment
+- [ ] Dev Day 4 expansion + unique: debugging session
+- [ ] PM Day 4 expansion
+- [ ] PO Day 4 expansion
+- [ ] QA Day 4 expansion + unique: automation vs manual debate
+- [ ] Arch Day 4 expansion + unique: code review of Sam's code
+
+---
+
+## Phase 5: Story Expansion -- Days 5-7 (All Characters)
+
+### Day 5 -- The Scope Creep (Target: ~1,200 words, 2 choices)
+- [ ] UX Day 5 expansion (Slack preview, extended meeting, second choice)
+- [ ] Dev Day 5 expansion (extended CRDT monologue)
+- [ ] PM Day 5 expansion
+- [ ] PO Day 5 expansion (internal conflict, political pressure)
+- [ ] QA Day 5 expansion
+- [ ] Arch Day 5 expansion + unique: diagram ignored scene
+
+### Day 6 -- Research Reckoning (Target: ~900 words, Solo Day)
+- [ ] UX Day 6 expansion + unique: design critique with mentor
+- [ ] Dev Day 6 expansion + unique: job posting temptation
+- [ ] PM Day 6 expansion + unique: status report to leadership
+- [ ] PO Day 6 expansion + unique: competitive analysis discovery
+- [ ] QA Day 6 expansion
+- [ ] Arch Day 6 expansion
+
+### Day 7 -- Dev Handoff (Target: ~1,000 words, 1-on-1 Day)
+- [ ] UX Day 7 expansion (intimate 2-character conversation)
+- [ ] Dev Day 7 expansion (extended technical detail)
+- [ ] PM Day 7 expansion
+- [ ] PO Day 7 expansion
+- [ ] QA Day 7 expansion + unique: test environment down
+- [ ] Arch Day 7 expansion + unique: Sam ignored patterns
+
+---
+
+## Phase 6: Story Expansion -- Days 8-12 (All Characters)
+
+### Day 8 -- QA Strikes (Target: ~1,300 words, crisis + binary choice early)
+- [ ] UX Day 8 expansion + unique: accessibility audit + callbacks
+- [ ] Dev Day 8 expansion + unique: debugging montage + callbacks
+- [ ] PM Day 8 expansion + unique: team morale survey
+- [ ] PO Day 8 expansion + callbacks
+- [ ] QA Day 8 expansion (massively expanded -- Riley's day)
+- [ ] Arch Day 8 expansion + callbacks
+
+### Day 9 -- The Pivot (Target: ~1,200 words, 2 choices)
+- [ ] UX Day 9 expansion (pre-meeting, extended demo, second choice)
+- [ ] Dev Day 9 expansion
+- [ ] PM Day 9 expansion
+- [ ] PO Day 9 expansion (sympathetic internal conflict)
+- [ ] QA Day 9 expansion
+- [ ] Arch Day 9 expansion + unique: architecture bends or breaks
+
+### Day 10 -- The Long Night (Target: ~1,300 words, 2 choices)
+- [ ] UX Day 10 expansion (timestamp segments, BGM changes)
+- [ ] Dev Day 10 expansion + unique: 3 AM commit scene
+- [ ] PM Day 10 expansion + unique: schedule chicken
+- [ ] PO Day 10 expansion
+- [ ] QA Day 10 expansion
+- [ ] Arch Day 10 expansion + unique: scaling math / infrastructure alert
+
+### Day 11 -- The Breaking Point (Target: ~1,300 words, 2 choices)
+- [ ] UX Day 11 expansion (conditional who-breaks, post-crisis)
+- [ ] Dev Day 11 expansion
+- [ ] PM Day 11 expansion
+- [ ] PO Day 11 expansion + unique: feature kill scene
+- [ ] QA Day 11 expansion (massively expanded -- Riley's snap)
+- [ ] Arch Day 11 expansion
+
+### Day 12 -- Demo Day (Target: ~1,200 words, 2 choices)
+- [ ] UX Day 12 expansion (pre-demo, specific demo moments, Q&A choice)
+- [ ] Dev Day 12 expansion
+- [ ] PM Day 12 expansion (orchestration moment)
+- [ ] PO Day 12 expansion
+- [ ] QA Day 12 expansion + unique: bug that slipped through
+- [ ] Arch Day 12 expansion
+
+---
+
+## Phase 7: Callback Web Implementation
+
+- [ ] Add conditional callbacks for `wants_research` in Days 6, 8, 12, 13
+- [ ] Add conditional callbacks for `pushed_interviews` in Days 6, 9, 13
+- [ ] Add conditional callbacks for `collab_with_dev` in Days 7, 8, 10
+- [ ] Add conditional callbacks for `pushed_back_demo` in Days 9, 12
+- [ ] Add conditional callbacks for `prioritized_users` in Days 8, 12, 13
+- [ ] Add conditional callbacks for `fought_scope` in Days 9, 12, 13
+- [ ] Add conditional callbacks for `absorbed_scope` in Days 8, 11
+- [ ] Add conditional callbacks for `followed_data` in Days 9, 12, 13
+- [ ] Add conditional callbacks for `paired_with_dev` in Days 8, 10, 11, 14
+- [ ] Add conditional callbacks for `took_ownership` in Days 10, 11, 13
+- [ ] Add conditional callbacks for `set_boundaries` in Days 11, 13, endings
+- [ ] Add conditional callbacks for `backed_riley` in Days 12, 13, 14
+
+---
+
+## Phase 8: Endings Expansion
+
+- [ ] UX -- The Burnout: add conditional callbacks
+- [ ] UX -- The Ship: add conditional callbacks
+- [ ] UX -- The Pivot: add conditional callbacks
+- [ ] UX -- The Promotion: add conditional callbacks
+- [ ] Dev -- all 4 endings: add conditional callbacks
+- [ ] PM -- all 4 endings: add conditional callbacks
+- [ ] PO -- all 4 endings: add conditional callbacks
+- [ ] QA -- all 4 endings: add conditional callbacks
+- [ ] Arch -- all 4 endings: add conditional callbacks
+- [ ] Rebalance ending thresholds if needed after new flags
+
+---
+
+## Phase 9: Pacing Polish
+
+- [ ] Add per-line BGM switches in crisis days (tension to relief within scenes)
+- [ ] Add bg switches within days for movement (desk to meeting to break room)
+- [ ] Add `{ text = "..." }` silence lines after vulnerable moments
+- [ ] Vary choice placement across days (some early, some mid, some late)
+- [ ] Verify pacing curve: long days (100-130 lines) vs short days (30-50 lines)
+- [ ] Time a full playthrough of UX route (~1.5-2 hours target)
+- [ ] Time a full playthrough of Dev route (~1.5-2 hours target)
+
+---
+
+## Phase 10: Verification
+
+- [ ] Run validate.py to check all story branches
+- [ ] Test all 4 endings trigger correctly for UX route
+- [ ] Test all 4 endings trigger correctly for Dev route
+- [ ] Verify conditional callbacks fire with known flag combinations
+- [ ] Check per-line BGM switching crossfades smoothly
+- [ ] Confirm relationship-threshold conditions work
+- [ ] Spot-check remaining 4 routes for consistency
+
+---
+
+## Previously Completed
+
+### Engine (Done)
+- [x] State system (flags, relationships, conditions)
+- [x] Character registry with names, titles, colors
+- [x] Scene module (loading, advancing, branching)
+- [x] Choice system with UI (keyboard + mouse)
+- [x] Conditional line skipping
+- [x] UTF-8 safe typewriter effect
+- [x] Colored speaker names with titles
+- [x] Fade transitions between scenes
+- [x] Per-line background switching
+- [x] Ending calculation logic
+- [x] Day title cards with narration
+- [x] Bigger fonts and improved textbox (conf.lua, 960x540)
+- [x] Mouse hover highlight on choices
+- [x] Save/load system (auto-save on scene load + line advance)
+- [x] Title screen / main menu (New Game, Continue, Quit)
+- [x] Choice box slide-in animation
+- [x] Procedural text blip sound effect
+- [x] Character select screen (3x2 grid, keyboard + mouse)
+- [x] Per-character scene routing
+
+### Story Content (Baseline -- to be expanded)
+- [x] All 15 days written for all 6 characters (baseline versions)
+- [x] All 4 endings written for all 6 characters (baseline versions)
+- [x] Story bible (story.md) -- updated with expansion plan
+- [x] Title cards with narration on all 15 days
+
+### Art & Assets (Done)
+- [x] Character portraits generated
+- [x] Backgrounds generated
+- [x] BGM tracks generated
+- [x] SFX sourced
+
+### Art & Assets -- Prompts Reference
+
+#### Character Portrait Prompts
+
+Style prefix (all characters):
 `anime visual novel character portrait, upper body, office setting, clean lineart, cel shading, transparent background, facing slightly left, soft lighting, modern casual office attire --ar 2:3`
 
-**Alex (UX) — ux\_{expression}.png**
-
+**Alex (UX) -- ux\_{expression}.png**
 - Base: `young adult, short tousled hair, warm brown skin, wearing a fitted henley shirt and smart watch, creative but polished look, carries a sketchbook`
-- neutral: `calm confident expression, slight smile`
-- thinking: `hand on chin, eyes looking up, contemplative`
-- frustrated: `pinching bridge of nose, eyes closed, exasperated`
-- excited: `bright wide smile, eyes sparkling, leaning forward slightly`
+- neutral, thinking, frustrated, excited
 
-**Sam (Dev) — dev\_{expression}.png**
-
+**Sam (Dev) -- dev\_{expression}.png**
 - Base: `mid-20s, messy dark hair, pale skin, wearing a faded band t-shirt under an open flannel, headphones around neck, slight stubble`
-- neutral: `deadpan expression, arms crossed, unimpressed`
-- smiling: `rare genuine grin, one eyebrow raised`
-- frustrated: `rubbing temples, tired eyes, grimacing`
-- tired: `dark circles under eyes, holding coffee mug, half-lidded stare`
+- neutral, smiling, frustrated, tired
 
-**Jordan (PM) — pm\_{expression}.png**
-
+**Jordan (PM) -- pm\_{expression}.png**
 - Base: `early 30s, neat short hair, olive skin, wearing a crisp button-down shirt with rolled sleeves, lanyard with badge, always holding a tablet or phone`
-- neutral: `professional smile, attentive posture, ready to take notes`
-- stressed: `forced smile, sweat drop, clutching tablet tightly`
-- cheerful: `big enthusiastic grin, pointing finger up, motivational energy`
+- neutral, stressed, cheerful
 
-**Priya (PO) — po\_{expression}.png**
-
+**Priya (PO) -- po\_{expression}.png**
 - Base: `late 20s, long dark wavy hair, South Asian, wearing a colorful blazer over a graphic tee, chunky statement necklace, expressive hand gestures`
-- neutral: `confident stance, hands together, warm smile`
-- excited: `eyes wide, both hands up gesturing, huge grin, radiating energy`
-- defensive: `arms crossed, chin tilted up, slight frown, stubborn look`
+- neutral, excited, defensive
 
-**Riley (QA) — qa\_{expression}.png**
-
+**Riley (QA) -- qa\_{expression}.png**
 - Base: `late 20s, short undercut hair, East Asian, wearing a plain black turtleneck, minimalist style, sharp observant eyes, round glasses`
-- neutral: `poker face, looking directly at viewer, arms at sides`
-- deadpan: `completely flat expression, one eyebrow slightly raised, unblinking`
-- smirk: `tiny knowing smirk, eyes narrowed slightly, "I told you so" energy`
+- neutral, deadpan, smirk
 
-**Casey (Architect) — arch\_{expression}.png**
-
+**Casey (Architect) -- arch\_{expression}.png**
 - Base: `mid-30s, neatly trimmed beard, tall, wearing a vest over a dress shirt, always has a whiteboard marker in breast pocket, professorial vibe`
-- neutral: `thoughtful expression, hand stroking beard, composed`
-- whiteboarding: `holding up a finger making a point, mouth open mid-explanation, passionate`
-- concerned: `furrowed brow, hand on back of neck, worried look`
+- neutral, whiteboarding, concerned
 
-### Background Prompts
+#### Background Prompts
+Style: `anime background art, no characters, wide shot, 800x600, detailed environment`
+- Modern open-plan office, daytime
+- Modern open-plan office, evening
+- Corporate meeting room
+- Home office, night time
+- Office break room
 
-Use same style prefix but: `anime background art, no characters, wide shot, 800x600, detailed environment`
-
-- `modern open-plan office, daytime, desks with monitors, warm lighting, plants`
-- `modern open-plan office, evening, orange sunset through windows, desk lamps on`
-- `corporate meeting room, large table, whiteboard covered in diagrams, projector screen`
-- `home office, messy desk, dual monitors, cat on chair, night time, desk lamp`
-- `office break room, coffee machine, vending machine, small table, fluorescent lighting`
-
-### Audio Sources
-
-**BGM (AI-generated music):**
-
-- Suno (suno.com) — text-to-music, free tier available. Good for looping BGM. Prompt ideas:
-  - "lo-fi chill office beats, relaxed, loop-friendly" (general theme)
-  - "upbeat quirky workplace comedy, light percussion" (standup scenes)
-  - "tense anxious synth, building pressure, corporate stress" (crunch/deadline scenes)
-  - "warm hopeful piano, resolution, achievement" (good endings)
-  - "melancholic slow piano, burnout, exhaustion" (bad ending)
-- Udio (udio.com) — similar to Suno, good quality
-- Stable Audio (stability.ai) — Stability AI's music generator
-
-**SFX (free libraries):**
-
-- Freesound.org — massive CC-licensed SFX library (notification dings, keyboard typing, door sounds, etc.)
-- Kenney.nl/assets — free game-ready SFX packs (UI clicks, transitions)
-- OpenGameArt.org — free game audio, some visual novel specific packs
-- SFXR/jsfxr (jsfxr.frozenfrog.com) — generate retro-style UI bleeps and bloops in-browser
-
-- [x] Generate character portraits using prompts above
-- [x] Generate backgrounds using prompts above
-- [x] Generate BGM tracks (at least: main theme, tense theme, resolution theme)
-- [x] Source SFX (notification, keyboard typing, door open, Slack ping, coffee pour)
-
-## Story Content
-
-- [x] Day 4 — The Design Review (everyone critiques Alex's work)
-- [x] Day 5 — The Scope Creep (Priya's weekend idea)
-- [x] Day 6 — User Research vs. Designing Blind
-- [x] Day 7 — Dev Handoff (Sam finds issues in the designs)
-- [x] Day 8 — QA Strikes (Riley breaks everything)
-- [x] Day 9 — The Pivot (Priya changes direction mid-sprint)
-- [x] Day 10 — The Long Night (crunch begins)
-- [x] Day 11 — The Breaking Point (Riley snaps)
-- [x] Day 12 — Demo Eve (final preparations)
-- [x] Day 13 — The Demo (leadership feedback + retrospective)
-- [x] Day 14 — The Aftermath (team says goodbye)
-- [x] Day 15 — The End (reflection + ending router)
-- [x] Ending: The Burnout
-- [x] Ending: The Ship
-- [x] Ending: The Pivot
-- [x] Ending: The Promotion
-- [x] Ending calculation logic in engine/state.lua
-- [ ] Write branching day variants for major divergence points (optional — game works without these)
-
-## Character Selection (Engine + UI)
-
-- [x] Engine: Add `playable` + `tagline` fields to `engine/characters.lua`
-- [x] Engine: Add `State.playingAs` + persist in save/load (default "ux" for back-compat)
-- [x] Engine: Route `Scene:_doLoadScene` through `scenes/<playingAs>/`
-- [x] Engine: New `charselect` gameMode in `main.lua`
-- [x] UI: Character select screen (3×2 grid of portrait cards, keyboard + mouse)
-- [x] Move existing `scenes/day*.lua` + `scenes/ending_*.lua` into `scenes/ux/`
-- [x] Test: all 6 characters selectable, each boots into their own day 1, save/load round-trips per character
-
-## Per-Character Storylines (Writing Backlog)
-
-For each of the 5 new playable characters, the same 15-day arc + 4 endings need to be written from that role's perspective. The UX route already exists and will be moved into `scenes/ux/`. Each role's perspective should make the player _feel_ what that IT job is like — purely experiential, no explainers.
-
-### Sam (Dev) route — `scenes/dev/`
-
-- [x] day1 — Kickoff from a developer's perspective (sizing the unknown, vague requirements)
-- [x] day2 — First Standup (estimating the unestimable)
-- [x] day3 — The Demo Bomb (the "works on my machine" moment)
-- [x] day4 — The Design Review (pushing back on impossible designs)
-- [x] day5 — The Scope Creep (the weekend idea that breaks the data model)
-- [x] day6 — Tech debt vs. new features
-- [x] day7 — Dev Handoff received (now you're the one finding issues)
-- [x] day8 — QA Strikes (Riley files 30 bugs against your code)
-- [x] day9 — The Pivot (refactoring under pressure)
-- [x] day10 — The Long Night (the crunch coding session)
-- [x] day11 — The Breaking Point (merge conflicts and exhaustion)
-- [x] day12 — Demo Eve (last-minute hotfix)
-- [x] day13 — The Demo (the live demo that almost crashes)
-- [x] day14 — The Aftermath (post-mortem on what broke)
-- [x] day15 — The End (reflection + ending router)
-- [x] Ending: The Ship (Dev variant)
-- [x] Ending: The Promotion (Tech Lead promotion)
-- [x] Ending: The Pivot (a half-built system Dev no longer recognizes)
-- [x] Ending: The Burnout (Dev variant)
-
-### Jordan (PM) route — `scenes/pm/`
-
-- [x] day1 — Kickoff (wrangling the room, setting expectations)
-- [x] day2 — First Standup (the standup that won't end)
-- [x] day3 — The Demo Bomb (managing the fallout)
-- [x] day4 — The Design Review (mediating between design and dev)
-- [x] day5 — The Scope Creep (defending the timeline)
-- [x] day6 — Stakeholder check-in (status reports, risk register)
-- [x] day7 — Dev Handoff (chasing down blockers)
-- [x] day8 — QA Strikes (re-planning around bugs)
-- [x] day9 — The Pivot (re-baselining the whole plan)
-- [x] day10 — The Long Night (keeping the team fed and sane)
-- [x] day11 — The Breaking Point (a team member breaks down)
-- [x] day12 — Demo Eve (rehearsals and contingencies)
-- [x] day13 — The Demo (the leadership Q&A)
-- [x] day14 — The Aftermath (retrospective facilitation)
-- [x] day15 — The End (reflection + ending router)
-- [x] Ending: The Ship (PM variant)
-- [x] Ending: The Promotion (Senior PM / Program Manager)
-- [x] Ending: The Pivot (PM variant)
-- [x] Ending: The Burnout (PM variant)
-
-### Priya (PO) route — `scenes/po/`
-
-- [x] day1 — Kickoff (presenting the vision)
-- [x] day2 — First Standup (defending priorities)
-- [x] day3 — The Demo Bomb (your vision, misunderstood)
-- [x] day4 — The Design Review (translating vision into specs)
-- [x] day5 — The Scope Creep (the weekend idea is now YOUR weekend idea)
-- [x] day6 — Stakeholder pressure (the executive ask)
-- [x] day7 — Dev Handoff (negotiating cuts)
-- [x] day8 — QA Strikes (which bugs are blockers?)
-- [x] day9 — The Pivot (you make the call to change direction)
-- [x] day10 — The Long Night (rewriting acceptance criteria at midnight)
-- [x] day11 — The Breaking Point (the team blames you)
-- [x] day12 — Demo Eve (final scope cuts)
-- [x] day13 — The Demo (presenting to leadership)
-- [x] day14 — The Aftermath (the next roadmap)
-- [x] day15 — The End (reflection + ending router)
-- [x] Ending: The Ship (PO variant)
-- [x] Ending: The Promotion (Head of Product)
-- [x] Ending: The Pivot (PO variant — your vision realized?)
-- [x] Ending: The Burnout (PO variant)
-
-### Riley (QA) route — `scenes/qa/`
-
-- [x] day1 — Kickoff (test planning while everyone else dreams)
-- [x] day2 — First Standup (being ignored)
-- [x] day3 — The Demo Bomb (you saw it coming)
-- [x] day4 — The Design Review (raising untested edge cases)
-- [x] day5 — The Scope Creep (more surface area to test)
-- [x] day6 — Building the regression suite
-- [x] day7 — Dev Handoff (finally something to test)
-- [x] day8 — QA Strikes (you file the 30 bugs — your day in the sun)
-- [x] day9 — The Pivot (your test plan invalidated)
-- [x] day10 — The Long Night (regression run after regression run)
-- [x] day11 — The Breaking Point (you snap at the team)
-- [x] day12 — Demo Eve (last-minute smoke tests)
-- [x] day13 — The Demo (will it crash on stage?)
-- [x] day14 — The Aftermath (the bug you missed)
-- [x] day15 — The End (reflection + ending router)
-- [x] Ending: The Ship (QA variant — the underappreciated hero)
-- [x] Ending: The Promotion (QA Lead / SDET)
-- [x] Ending: The Pivot (QA variant)
-- [x] Ending: The Burnout (QA variant)
-
-### Casey (Architect) route — `scenes/arch/`
-
-- [x] day1 — Kickoff (sketching the system on a napkin)
-- [x] day2 — First Standup (being asked "is this possible?")
-- [x] day3 — The Demo Bomb (architectural drift)
-- [x] day4 — The Design Review (aligning UI to data model)
-- [x] day5 — The Scope Creep (over-engineering vs. quick wins)
-- [x] day6 — The whiteboard session nobody understands
-- [x] day7 — Dev Handoff (Sam ignores your patterns)
-- [x] day8 — QA Strikes (architectural bugs vs. implementation bugs)
-- [x] day9 — The Pivot (the architecture has to bend or break)
-- [x] day10 — The Long Night (refactoring foundations)
-- [x] day11 — The Breaking Point (your design rejected)
-- [x] day12 — Demo Eve (will the architecture hold?)
-- [x] day13 — The Demo (technical Q&A)
-- [x] day14 — The Aftermath (the technical debt diary)
-- [x] day15 — The End (reflection + ending router)
-- [x] Ending: The Ship (Architect variant)
-- [x] Ending: The Promotion (Principal Engineer / Staff)
-- [x] Ending: The Pivot (Architect variant)
-- [x] Ending: The Burnout (Architect variant)
-
-## Polish
-
-- [x] Animate choice boxes appearing (slide in + fade, staggered per choice)
-- [x] Add text sound effect (procedural blip every 2 characters during typewriter)
-- [x] Test all story branches end-to-end (validate.py)
-- [x] Update README with final feature list
-- [x] Update story.md with multi-character premise
-
-## Done
-
-- [x] Engine: State system (flags, relationships, conditions)
-- [x] Engine: Character registry with names, titles, colors
-- [x] Engine: Scene module (loading, advancing, branching)
-- [x] Engine: Choice system with UI (keyboard + mouse)
-- [x] Engine: Conditional line skipping
-- [x] Engine: UTF-8 safe typewriter effect
-- [x] Engine: Colored speaker names with titles
-- [x] Engine: Fade transitions between scenes
-- [x] Engine: Per-line background switching
-- [x] Engine: Ending calculation logic
-- [x] Engine: Day title cards with narration
-- [x] Engine: Bigger fonts and improved textbox (conf.lua, 960x540)
-- [x] Engine: Mouse hover highlight on choices
-- [x] Engine: Save/load system (auto-save on scene load + line advance)
-- [x] Engine: Title screen / main menu (New Game, Continue, Quit)
-- [x] Engine: Choice box slide-in animation
-- [x] Engine: Procedural text blip sound effect
-- [x] Story: Day 1 — Kickoff (with 3-way choice)
-- [x] Story: Day 2 — First Standup (with 3-way choice)
-- [x] Story: Day 3 — The Demo Bomb (with 3-way choice)
-- [x] Story: Days 4-15 + 4 endings (complete story)
-- [x] Story: story.md — Full story bible with arc, characters, endings
-- [x] Story: Title cards with narration on all 15 days
+#### Audio Sources
+**BGM:** Suno, Udio, Stable Audio
+**SFX:** Freesound.org, Kenney.nl, OpenGameArt.org, jsfxr

@@ -23,8 +23,28 @@ function State:check(condition)
     end
     if type(condition) == "table" then
         for key, val in pairs(condition) do
-            if self.flags[key] ~= val then
-                return false
+            -- Relationship-threshold conditions: rel_{who}_gte = N
+            local rel_who, op = key:match("^rel_(.+)_(gte)$")
+            if not rel_who then
+                rel_who, op = key:match("^rel_(.+)_(lte)$")
+            end
+            if not rel_who then
+                rel_who, op = key:match("^rel_(.+)_(gt)$")
+            end
+            if not rel_who then
+                rel_who, op = key:match("^rel_(.+)_(lt)$")
+            end
+            if rel_who then
+                local score = self.relationships[rel_who] or 0
+                if op == "gte" and not (score >= val) then return false end
+                if op == "lte" and not (score <= val) then return false end
+                if op == "gt" and not (score > val) then return false end
+                if op == "lt" and not (score < val) then return false end
+            else
+                -- Standard flag check
+                if self.flags[key] ~= val then
+                    return false
+                end
             end
         end
         return true

@@ -248,17 +248,29 @@ function Scene:loadFromSave()
     self.showingTitleCard = false
     self.titleCardPhase = "none"
 
-    -- Load BGM (crossfade)
-    if self.current.bgm then
-        self:crossfadeBGM(self.current.bgm)
+    -- Resolve the effective bg and bgm by scanning from scene defaults through
+    -- all dialogue lines up to the saved position, so per-line overrides are applied.
+    local effectiveBG = self.current.bg
+    local effectiveBGM = self.current.bgm
+    for i = 1, self.currentLine do
+        local dl = self.current.dialogue[i]
+        if dl then
+            if dl.bg then effectiveBG = dl.bg end
+            if dl.bgm then effectiveBGM = dl.bgm end
+        end
     end
 
     -- Load background
-    if self.current.bg then
-        self.backgroundName = self.current.bg
+    if effectiveBG then
+        self.backgroundName = effectiveBG
         if not self.backgroundImages[self.backgroundName] then
             self.backgroundImages[self.backgroundName] = love.graphics.newImage("assets/bg/" .. self.backgroundName .. ".png")
         end
+    end
+
+    -- Load BGM (crossfade)
+    if effectiveBGM then
+        self:crossfadeBGM(effectiveBGM)
     end
 
     -- Set the current line
@@ -295,6 +307,21 @@ function Scene:setLine(line)
         end
     end
 
+    -- Handle lines with no text (bg/bgm-only transitions): apply changes and auto-advance
+    if not line.text or line.text == "" then
+        if line.bg then
+            self.backgroundName = line.bg
+            if not self.backgroundImages[self.backgroundName] then
+                self.backgroundImages[self.backgroundName] = love.graphics.newImage("assets/bg/" .. self.backgroundName .. ".png")
+            end
+        end
+        if line.bgm then
+            self:crossfadeBGM(line.bgm)
+        end
+        self:advanceLine()
+        return
+    end
+
     -- Per-line background switching
     if line.bg then
         self.backgroundName = line.bg
@@ -306,6 +333,11 @@ function Scene:setLine(line)
         if not self.backgroundImages[self.backgroundName] then
             self.backgroundImages[self.backgroundName] = love.graphics.newImage("assets/bg/" .. self.backgroundName .. ".png")
         end
+    end
+
+    -- Per-line BGM switching
+    if line.bgm then
+        self:crossfadeBGM(line.bgm)
     end
 end
 
